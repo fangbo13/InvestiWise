@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas&display=swap');
+
+/* 之后是其他的 CSS 样式... */
+
+
+.homepage-container {
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+}
+
+.title-container {
+    text-align: center;
+}
+
+.holiday-title {
+    color: white;
+    font-family: 'Mountains of Christmas', cursive; /* 圣诞节风格的字体 */
+    font-size: 3em; /* 调整字体大小 */
+}
