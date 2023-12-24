@@ -1,10 +1,10 @@
-from django.shortcuts import render
-
-# Create your views here.
-from rest_framework import generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .models import HomeContent
 from .serializers import HomeContentSerializer
 
-class HomeContentAPIView(generics.RetrieveAPIView):
-    queryset = HomeContent.objects.all()
-    serializer_class = HomeContentSerializer
+class HomeContentView(APIView):
+    def get(self, request):
+        settings = HomeContent.objects.first()  # 获取第一个实例
+        serializer = HomeContentSerializer(settings)
+        return Response(serializer.data)
