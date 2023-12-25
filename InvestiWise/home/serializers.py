@@ -4,4 +4,4 @@ from .models import HomeContent
 class HomeContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = HomeContent
-        fields = ['stock_codes', 'heading', 'home_background']
+        fields = ['stock_codes', 'heading', 'introduce','brand_name']
