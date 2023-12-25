@@ -13,7 +13,8 @@ Welcome to Haibo's dissertation project! This system leverages machine learning,
 
 
 ## Acknowledgements
-be pending
+Pending
+
 ---
 
 🚀 *Happy Analyzing and Predicting!* 🚀
