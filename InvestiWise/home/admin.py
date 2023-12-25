@@ -5,5 +5,5 @@ from .models import HomeContent
 
 @admin.register(HomeContent)
 class HomeContentAdmin(admin.ModelAdmin):
-    list_display = ['stock_codes', 'home_background', 'heading']
+    list_display = ['stock_codes', 'brand_name', 'heading','introduce']
     list_display_links = list_display

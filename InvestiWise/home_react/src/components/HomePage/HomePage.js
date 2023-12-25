@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './HomePage.css';
 
 function HomePage() {
-    const [settings, setSettings] = useState({ title: '' });
+    const [settings, setSettings] = useState({ title: '', brand: '', introduce: '' });
     const [stocks, setStocks] = useState([]);
 
     useEffect(() => {
@@ -11,7 +11,9 @@ function HomePage() {
             .then(response => response.json())
             .then(data => {
                 setSettings({
-                    title: data.heading
+                    title: data.heading,
+                    brand: data.brand_name, // Add the brand name
+                    introduce: data.introduce, // Add the introduce text
                 });
             });
 
@@ -34,12 +36,16 @@ function HomePage() {
     return (
         <div className="homepage-container">
             <div className="header">
-                <div className="inner-header">
-                    <div className="title-container">
+                <div className="inner-header"> 
+                    <div className="title-brand-container">
                         <h1 className="title">{settings.title}</h1>
+                        <span className="brand-name">{settings.brand}</span>
+                    </div>
+           
+                    <div className="introduce-container">
+                        <p className="introduce">{settings.introduce}</p> {/* Display the introduce text */}
                     </div>
                 </div>
-
                 <div>
                     <svg className="waves" xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
@@ -47,10 +53,10 @@ function HomePage() {
                             <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
                         </defs>
                         <g className="parallax">
-                            <use href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
-                            <use href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
-                            <use href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
-                            <use href="#gentle-wave" x="48" y="7" fill="#fff" />
+                            <use href="#gentle-wave" x="48" y="0"  />
+                            <use href="#gentle-wave" x="48" y="3"  />
+                            <use href="#gentle-wave" x="48" y="5"  />
+                            <use href="#gentle-wave" x="48" y="7"  />
                         </g>
                     </svg>
                 </div>
