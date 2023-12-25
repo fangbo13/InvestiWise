@@ -1,60 +1,69 @@
-    /* CSS文件（HomePage.css） */
-
-    @import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas&display=swap');
-
-    .homepage-container {
-        min-height: 100vh;
-        background-size: cover;
-        background-position: center;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        text-align: center;
-        position: relative;
-    }
-
-    .title-container {
-        text-align: center;
-        margin-top: 20px;
-        z-index: 2;
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-    
-    .title {
-        color: rgb(21, 21, 21);
-        font-family: 'Mountains of Christmas', cursive;
-        font-size: 5em;
-        line-height: 1.5;
-    }
-
-/* 透明背景的股票滚动条容器 */
-.stock-ticker-wrapper {
-    overflow: hidden;
-    white-space: nowrap;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 30px;
-    z-index: 1;
+/* General Styles */
+body, html {
+    margin: 0;
+    height: 100%;
+    background-color: white; /* Set background to white */
+    overflow: hidden; /* Prevent scrollbar appearance */
 }
 
-/* 股票滚动条样式 */
+/* Header Styles */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    color: #0d0d0d; /* Adjusted text color */
+    z-index: 3;
+}
+
+.inner-header {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+
+/* Homepage Container */
+.homepage-container {
+    height: 100vh;
+    position: relative;
+}
+
+.title-container {
+    text-align: center;
+}
+
+.title {
+    font-family: 'Helvetica', cursive;
+    font-size: 5em;
+    line-height: 1.5;
+    white-space: nowrap;
+    
+}
+
+/* Stock Ticker Styles */
+.stock-ticker-wrapper {
+    overflow: hidden;
+    white-space: nowrap;    
+    position: absolute;
+    top: 10px; /* Moved to top */
+    width: 100%;
+    z-index: 3;
+}
+
 .stock-ticker {
     display: inline-block;
     animation: ticker-move 30s linear infinite;
-    animation-fill-mode: forwards; /* 动画在结束时保持最后一个属性值 */
 }
 
 .stock-ticker-wrapper:hover .stock-ticker {
     animation-play-state: paused;
 }
-/* 股票项目样式，包括悬停放大和暂停滚动的效果 */
+
 .stock-item {
     display: inline-block;
     margin: 0 10px;
@@ -65,29 +74,74 @@
     font-family: 'Arial', sans-serif;
     font-size: 1em;
     transition: transform 0.3s ease;
-    /* animation-play-state: running; 默认运行动画 */
 }
 
 .stock-up {
-    color: #f44336; /* 涨为红色 */
+    color: #f44336;
 }
 
 .stock-down {
-    color: #4caf50; /* 跌为绿色 */
+    color: #4caf50;
 }
 
-/* 悬停时放大并暂停滚动 */
 .stock-item:hover {
-    transform: scale(1.1);
+    transform: scale(0.9);
 }
 
-/* 关键帧动画 */
-/* 关键帧动画 */
+/* Waves Styles */
+.waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 55%; /* Adjust height if necessary */
+    z-index: 1;
+}
+
+.parallax > use {
+    animation: move-forever cubic-bezier(.55,.5,.45,.5) infinite;
+}
+
+.parallax > use:nth-child(1) {
+    fill: #6495ED;
+    animation-delay: -2s;
+    animation-duration: 7s;
+}
+
+.parallax > use:nth-child(2) {
+    fill: #4169E1;
+    animation-delay: -3s;
+    animation-duration: 10s;
+}
+
+.parallax > use:nth-child(3) {
+    fill: #1E90FF;
+    animation-delay: -4s;
+    animation-duration: 13s;
+}
+
+.parallax > use:nth-child(4) {
+    fill: #0000CD;
+    animation-delay: -5s;
+    animation-duration: 20s;
+}
+
+
+
+@keyframes move-forever {
+    0% {
+        transform: translate3d(-90px, 0, 0);
+    }
+    100% {
+        transform: translate3d(85px, 0, 0);
+    }
+}
+
 @keyframes ticker-move {
     0% {
         transform: translateX(100%);
     }
     100% {
-        transform: translateX(-75%); /* 根据实际宽度调整这里的百分比 */
+        transform: translateX(-100%); /* Ensure the items move completely off screen */
     }
 }
