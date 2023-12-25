@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './HomePage.css';
 
 function HomePage() {
-    const [settings, setSettings] = useState({ title: '', backgroundImage: '' });
+    const [settings, setSettings] = useState({ title: '' });
     const [stocks, setStocks] = useState([]);
 
     useEffect(() => {
@@ -11,8 +11,7 @@ function HomePage() {
             .then(response => response.json())
             .then(data => {
                 setSettings({
-                    title: data.heading,
-                    backgroundImage: `http://127.0.0.1:8000${data.home_background}`
+                    title: data.heading
                 });
             });
 
@@ -32,16 +31,29 @@ function HomePage() {
             });
     }, []);
 
-    const backgroundStyle = {
-        backgroundImage: `url(${settings.backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-    };
-
     return (
-        <div className="homepage-container" style={backgroundStyle}>
-            <div className="title-container">
-                <h1 className="title">{settings.title}</h1>
+        <div className="homepage-container">
+            <div className="header">
+                <div className="inner-header">
+                    <div className="title-container">
+                        <h1 className="title">{settings.title}</h1>
+                    </div>
+                </div>
+
+                <div>
+                    <svg className="waves" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                        <defs>
+                            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                        </defs>
+                        <g className="parallax">
+                            <use href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
+                            <use href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+                            <use href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+                            <use href="#gentle-wave" x="48" y="7" fill="#fff" />
+                        </g>
+                    </svg>
+                </div>
             </div>
 
             <div className="stock-ticker-wrapper">
@@ -58,4 +70,3 @@ function HomePage() {
 }
 
 export default HomePage;
-    
