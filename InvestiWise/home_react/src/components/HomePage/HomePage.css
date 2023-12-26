@@ -14,48 +14,60 @@ body, html {
     align-items: center; /* 水平居中 */
     justify-content: center; /* 垂直居中 */
     height: 100vh; /* 使用视窗高度，确保整个容器占满屏幕高度 */
-    z-index: 2;
+    z-index: 4;
 }
 
 .title-brand-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
-    justify-content: center; /* Flexbox 水平居中对齐 */
-    align-items: center; /* Flexbox 垂直居中 */
+    justify-content: center; /* 水平居中对齐 */
+    align-items: center; /* 垂直居中对齐 */
     gap: 10px; /* 标题和品牌之间的间距 */
 }
 
-.introduce-container {
-    margin-top: 20px; /* 介绍和标题/品牌容器之间的间距 */
-}
+
 /* ====================== Title style ====================== */
 
 .title {
-    font-size: 3.5rem; /* 维持原有字体大小 */
     margin-right: 1.5rem;
-    margin-top: -18px; /* 向上移动一点点 */
+    margin-top: -40px; /* 向上移动一点点 */
     margin-left: -8px; /* 向左移动一点点 */
-    color:  rgb(44, 43, 55); 
+    color:  rgb(0, 0, 0); 
     font-family: 'Times New Roman', sans-serif;
     line-height: 1.2; /* 维持原有行高 */
+    font-size: 5rem;
+    white-space: nowrap;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    -webkit-text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    font-style: italic;
+
 }
 
 .brand-name {
     font-size: 7rem;
     font-family: 'Times New Roman', sans-serif;
-    color:  rgb(0, 0, 0); 
-    letter-spacing: 0.05em; /* 添加字母间距 */
-    text-shadow: 2px 2px 4px rgba(137, 150, 239, 0.5);
+    color: rgb(167, 25, 0);
+    letter-spacing: 0.05em;
+    text-shadow: 2px 2px 4px rgba(167, 25, 0, 0.9); /* 阴影颜色与color相同 */
+    -webkit-text-shadow: 2px 2px 4px rgba(167, 25, 0, 0.9);
+    
 }
 
 
+
 .introduce {
-    font-family: 'Basic', sans-serif;
-    font-size: 14px;
-    font-weight: 400;
+    font-family: 'Times New Roman', sans-serif;
+    font-size:16px;
+    font-weight: 500;
     color: #000000;
     line-height: 1.8;
-    margin: 1rem 0;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-style: italic;
+    font-weight: bold;
+
+
 }
 
 
@@ -66,10 +78,10 @@ body, html {
         overflow: hidden;
         white-space: nowrap;    
         position: absolute;
-        top: 10px; /* Moved to top */
+        top: 20px; /* Moved to top */
         width: 100%;
         z-index: 3;
-        height: 35px;
+        height:38px;
     }
 
     .stock-ticker {
@@ -113,7 +125,7 @@ body, html {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 60vh; /* Adjust height if necessary */
+    height: 25vh; /* Adjust height if necessary */
     z-index: 1;
 }
 
@@ -121,29 +133,30 @@ body, html {
     animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
   }
 
-.parallax > use:nth-child(1) {
-    fill: #6495ED;
+  .parallax > use:nth-child(1) {
+    fill: #DC143C; /* 猩红色 (Crimson) */
     animation-delay: -2s;
     animation-duration: 7s;
 }
 
 .parallax > use:nth-child(2) {
-    fill: #4169E1;
+    fill: #FF0000; /* 红色 (Red) */
     animation-delay: -3s;
     animation-duration: 10s;
 }
 
 .parallax > use:nth-child(3) {
-    fill: #1E90FF;
+    fill: #B22222; /* 火砖色 (Firebrick) */
     animation-delay: -4s;
     animation-duration: 13s;
 }
 
 .parallax > use:nth-child(4) {
-    fill: #2323e0;
+    fill: #8B0000; /* 深红色 (Dark Red) */
     animation-delay: -5s;
     animation-duration: 17s;
 }
+
 
 @keyframes move-forever {
     0% {
