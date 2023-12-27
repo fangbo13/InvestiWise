@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import './HomePage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faPlay } from '@fortawesome/free-solid-svg-icons';
+
 
 
 
@@ -60,6 +63,14 @@ function HomePage() {
             
                         <div className="introduce-container">
                             <p className="introduce">{settings.introduce}</p> {/* Display the introduce text */}
+                        </div>
+                        <div>
+                            <a href="#0" class="button btn-hover btn-fill mt-5">
+                                Try it now →
+                            </a>    
+                            {/* <a href="#0" className="button video-btn mt-5">
+                                <FontAwesomeIcon icon={faPlay} />
+                            </a> */}
                         </div>
                     </div>
                     <div>

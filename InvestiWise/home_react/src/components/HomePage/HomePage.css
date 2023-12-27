@@ -66,8 +66,6 @@ body, html {
     line-height: 1.8;
     font-style: italic;
     font-weight: bold;
-
-
 }
 
 
@@ -117,6 +115,105 @@ body, html {
     .stock-item:hover {
         transform: scale(0.9);
     }
+/* ====================== Button Styles ====================== */
+.button:link,
+.button:visited {
+    margin: 10px auto 0;
+    padding: 14px 15px;
+    color: #353434;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    letter-spacing: .08em;
+    -webkit-text-shadow: 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(0, 0, 0, 0.2);
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;
+}
+
+.btn-hover:link:after,
+.btn-hover:visited:after {
+    content: "";
+    position: absolute;
+    height: 0%;
+    left: 46%;
+    top: 35%;
+    width: 100%;
+    z-index: -1;
+    -webkit-transition: all 0.75s ease 0s;
+    -moz-transition: all 0.75s ease 0s;
+    -o-transition: all 0.75s ease 0s;
+    transition: all 0.75s ease 0s;
+}
+
+.btn-hover:link:hover,
+.btn-hover:visited:hover {
+    color: #FFF;
+    text-shadow: none;
+}
+
+.btn-hover:link:hover:after,
+.btn-hover:visited:hover:after {
+    height: 100%;
+}
+
+.btn-hover:link,
+.btn-hover:visited {
+    position: relative;
+    margin: 10px auto 0;
+    padding: 14px 15px;
+    color: #353434;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    letter-spacing: .08em;
+    -webkit-text-shadow: 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(0, 0, 0, 0.2);
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;
+}
+
+.btn-hover.btn-fill {
+    border: 2px solid #B22222;  
+}
+
+.btn-hover.btn-fill:after {
+    background: #B22222;
+    opacity: .5;
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.btn-hover.btn-fill:hover:after {
+    height: 100%;
+    opacity: 1;
+}
+
+/* .video-btn {
+    background-color: #ffffff; 
+    padding: 10px; 
+    border-radius: 2px;
+    color: black; 
+    transition: background-color 0.3s, color 0.3s; 
+} */
+
+/* .video-btn:hover {
+    background-color: #B22222;
+    color: white; 
+} */
+
 
 /* ====================== Waves Styles ====================== */
 /* 背景波浪动画样式 */
@@ -140,7 +237,7 @@ body, html {
 }
 
 .parallax > use:nth-child(2) {
-    fill: #FF0000; /* 红色 (Red) */
+    fill: #b80909; /* 红色 (Red) */
     animation-delay: -3s;
     animation-duration: 10s;
 }

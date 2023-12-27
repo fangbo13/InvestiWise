@@ -29,7 +29,7 @@
 
 /* 导航链接样式 */
 .navbar .navbar-nav .active {
-    color: #009933 !important;
+    color: #006cc4 !important;
 }
 
 .navbar-collapse .navbar-nav .nav-link {
@@ -55,7 +55,7 @@
     width: 0%;
     content: '.';
     color: transparent;
-    background: #009933;
+    background: #0569b9;
     height: 1px;
     -webkit-transition: all .5s;
     transition: all .5s;
@@ -70,7 +70,7 @@
     width: 0%;
     content: '.';
     color: transparent;
-    background: #009933;
+    background: #0569b9 ;
     height: 1px;
     -webkit-transition: all .5s;
     transition: all .5s;
