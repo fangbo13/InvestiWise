@@ -33,7 +33,7 @@ body, html {
 
 .title {
     margin-right: 1.5rem;
-    margin-top: -40px; /* 向上移动一点点 */
+    margin-top: -5  0px; /* 向上移动一点点 */
     margin-left: -8px; /* 向左移动一点点 */
     color:  rgb(0, 0, 0); 
     font-family: 'Times New Roman', sans-serif;
@@ -184,7 +184,8 @@ body, html {
 }
 
 .btn-hover.btn-fill {
-    border: 2px solid #B22222;  
+    border: 2px solid #B22222;
+    border-radius: 10px;
 }
 
 .btn-hover.btn-fill:after {
@@ -199,6 +200,7 @@ body, html {
 .btn-hover.btn-fill:hover:after {
     height: 100%;
     opacity: 1;
+
 }
 
 /* .video-btn {
