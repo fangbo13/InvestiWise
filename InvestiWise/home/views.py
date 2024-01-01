@@ -42,3 +42,4 @@ class StockDataView(APIView):
             else:
                 stock_data[ticker] = f"{ticker} N/A"
         return stock_data
+#  
