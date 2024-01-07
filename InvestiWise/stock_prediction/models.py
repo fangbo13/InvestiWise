@@ -1,16 +1,23 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+import matplotlib.pyplot as plt
+
 
 class StockPrediction(models.Model):
     # 用户输入的股票代码
     stock_code = models.CharField(max_length=10)
-    stock_name = models.CharField(max_length=100)
 
     # 训练数据和验证数据的年份选择
-    training_year = models.IntegerField()
-    validation_years = models.IntegerField()
+    training_year = models.PositiveIntegerField(
+            validators=[
+                MinValueValidator(4, message="训练年份必须大于等于4"),
+                MaxValueValidator(19, message="训练年份必须小于等于19"),
+            ]
+        )    
+    validation_years = models.PositiveIntegerField()
 
     # 预测未来走势的天数
-    prediction_days = models.IntegerField()
+    prediction_days = models.PositiveIntegerField()
 
     # 机器学习模型选择
     ML_MODEL_CHOICES = [

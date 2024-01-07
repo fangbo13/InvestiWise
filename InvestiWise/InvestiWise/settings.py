@@ -44,10 +44,17 @@ INSTALLED_APPS = [
     'stock_prediction',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.common.CommonMiddleware',    
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -87,7 +94,8 @@ DATABASES = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # 允许 React 前端的源
+    "http://localhost:3000",
+    "http://localhost:8000",  # 允许 React 前端的源
 ]
 
 # Password validation
