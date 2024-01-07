@@ -1,5 +1,7 @@
 import React from 'react';
 import './Navbar.css'; // 导入组件的CSS样式
+import { Link } from 'react-router-dom';
+
 
 class Navbar extends React.Component {
   render() {
@@ -7,8 +9,10 @@ class Navbar extends React.Component {
       <>
         {/* Logo 容器 */}
         <div className="logo-container">
-          <img src="/img/Logo.png" alt="header-Logo" className="logo" />
-        </div>
+          <Link to="/">
+              <img src="/img/Logo.png" alt="header-Logo" className="logo" />
+          </Link>
+      </div>
 
         {/* 导航条 */}
         <nav className="navbar navbar-expand-lg">

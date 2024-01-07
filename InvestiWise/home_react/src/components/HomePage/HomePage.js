@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import './HomePage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faPlay } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 
 
@@ -41,6 +40,7 @@ function HomePage() {
     }, []);
 
     return (
+        
         <div>
             <Navbar/>
 
@@ -65,17 +65,14 @@ function HomePage() {
                             <p className="introduce">{settings.introduce}</p> {/* Display the introduce text */}
                         </div>
                         <div>
-                            <a href="#0" class="button btn-hover btn-fill mt-5">
+                            <Link to="/predict" className="button btn-hover btn-fill mt-5">
                                 Try it now →
-                            </a>    
-                            {/* <a href="#0" className="button video-btn mt-5">
-                                <FontAwesomeIcon icon={faPlay} />
-                            </a> */}
+                            </Link>
                         </div>
                     </div>
                     <div>
                         <svg className="waves" xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                        viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
                             <defs>
                                 <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
                             </defs>
