@@ -3,8 +3,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import StockPredictionSerializer
+from .models import StockPrediction
+
 
 class InputView(APIView):
+    def get(self, request):
+            # 查询所有的 StockPrediction 实例
+            stock_predictions = StockPrediction.objects.all()
+            # 使用序列化器
+            serializer = StockPredictionSerializer(stock_predictions, many=True)
+            # 返回响应
+            return Response(serializer.data)
+    
     def post(self, request):
         serializer = StockPredictionSerializer(data=request.data)
         if serializer.is_valid():
