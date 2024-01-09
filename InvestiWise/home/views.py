@@ -33,7 +33,7 @@ class StockDataView(APIView):
         stock_data = {}
         for ticker in stock_list:
             stock = yf.Ticker(ticker)
-            hist = stock.history(period="3d")
+            hist = stock.history(period="2d")
             if not hist.empty and len(hist) >= 2:
                 last_close = hist['Close'].iloc[-1]
                 prev_close = hist['Close'].iloc[-2]
