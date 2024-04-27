@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import StockPrediction
+from .models import StockPrediction, StockData
 
 @admin.register(StockPrediction)
 class StockPredictionAdmin(admin.ModelAdmin):
@@ -8,3 +8,5 @@ class StockPredictionAdmin(admin.ModelAdmin):
     search_fields = ('stock_code', 'stock_name')
 
 
+
+admin.site.register(StockData)

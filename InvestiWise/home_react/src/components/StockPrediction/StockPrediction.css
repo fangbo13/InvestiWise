@@ -1,0 +1,4 @@
+.scrollable-container {
+    overflow-y: scroll;
+    max-height: 100vh; /* 设置最大高度，保证在垂直方向上可以滚动 */
+}
