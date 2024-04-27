@@ -37,3 +37,10 @@ class StockPrediction(models.Model):
 
 
 
+class StockData(models.Model):
+    stock_code = models.CharField(max_length=10)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.stock_code} from {self.start_date} to {self.end_date}"

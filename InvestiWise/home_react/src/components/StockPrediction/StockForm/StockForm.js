@@ -1,6 +1,8 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
 import './StockForm.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 function getCsrfToken() {
     // 从 cookie 中获取 CSRF 令牌的函数
     let csrfToken = null;
@@ -60,13 +62,14 @@ function StockForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="stock-form" onSubmit={handleSubmit}>
             <label>
                 Stock Code:
                 <input
                     type="text"
                     value={stockCode}
                     onChange={(e) => setStockCode(e.target.value)}
+                    className="stock-form-input"
                 />
             </label>
             <label>
@@ -75,6 +78,7 @@ function StockForm() {
                     type="number"
                     value={trainingYear}
                     onChange={(e) => setTrainingYear(e.target.value)}
+                    className="stock-form-input"
                 />
             </label>
             <label>
@@ -83,6 +87,7 @@ function StockForm() {
                     type="number"
                     value={validationYears}
                     onChange={(e) => setValidationYears(e.target.value)}
+                    className="stock-form-input"
                 />
             </label>
             <label>
@@ -91,18 +96,19 @@ function StockForm() {
                     type="number"
                     value={predictionDays}
                     onChange={(e) => setPredictionDays(e.target.value)}
+                    className="stock-form-input"
                 />
             </label>
             <label>
                 ML Model:
-                <select value={mlModel} onChange={(e) => setMlModel(e.target.value)}>
+                <select value={mlModel} onChange={(e) => setMlModel(e.target.value)} className="stock-form-select">
                     <option value="LR">Linear Regression</option>
                     <option value="RF">Random Forest</option>
                     <option value="SVM">Support Vector Machine</option>
                     {/* 更多模型选项 */}
                 </select>
             </label>
-            <button type="submit">Submit</button>
+            <button type="submit" className="stock-form-submit">Submit</button>
         </form>
     );
 }

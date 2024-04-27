@@ -1,9 +1,12 @@
+import yfinance as yf
 from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
-from .serializers import StockPredictionSerializer
-from .models import StockPrediction
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import StockData, StockPrediction
+from .serializers import StockDataSerializer, StockPredictionSerializer
+from .dataprice import fetch_stock_data, summary_statistics
 
 
 class InputView(APIView):
@@ -30,3 +33,30 @@ class InputView(APIView):
 
 
 # Create your views here.
+class StockDataView(APIView):
+    def get(self, request):
+        data = StockData.objects.all()
+        serializer = StockDataSerializer(data, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = StockDataSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            stock_code = request.data.get('stock_code')
+            start_date = request.data.get('start_date')
+            end_date = request.data.get('end_date')
+            stock_data = fetch_stock_data(stock_code, start_date, end_date)
+            
+            if not stock_data:
+                return Response({"error": "No data found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            stats = summary_statistics(stock_data['prices'])  # Assume stock_data['prices'] is a list of prices
+
+            return Response({
+                "message": "Data submitted successfully.",
+                "stock_data": stock_data,
+                "statistics": stats
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
