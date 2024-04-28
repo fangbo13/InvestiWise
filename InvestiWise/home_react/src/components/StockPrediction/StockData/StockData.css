@@ -1,78 +1,135 @@
 .container {
     display: flex;
-    margin: 20px;
-    justify-content: center;
+    justify-content: space-between; /* 子项之间保持均匀间距 */
+    align-items: flex-start; /* 项目对齐容器的起始位置 */
+    box-sizing: border-box; /* 确保内边距不影响宽度计算 */
+    gap: 30px; /* 子项之间的间隔 */
 }
 
 .input-container {
-    flex: 1;
-    margin-right: 10px; /* Adjusted margin */
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 350px;
-    max-height: 400px; /* Adjust the maximum height as needed */
-    overflow-y: auto; /* Add scrollbar if content exceeds height */
+    margin-left: -125px;
+    max-width: 300px;
+    max-height: 320px;
 }
+
+.hot-stocks-container {
+    overflow: hidden; 
+    margin-right: -125px;
+    max-width: 350px;
+    min-height: 350px;
+}
+
+
+.input-container,
+.chart-container,
+.hot-stocks-container {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 过渡效果 */
+    overflow-y: auto; /* 如果内容过多，允许滚动 */
+}
+
+.input-container:hover,
+.chart-container:hover,
+.hot-stocks-container:hover {
+    transform: translateY(-4px); /* 鼠标悬停时上移 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 鼠标悬停时阴影效果更明显 */
+}
+
 
 .chart-container {
-    flex: 2;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    min-height: 600px; /* Increased height */
-    margin-left: 10px; /* Adjusted margin */
+    min-height: 480px;
+    width: 900px; /* 固定宽度 */
 }
+/* 以下CSS保持不变，只是为了完整性而列出 */
 
 .form-label {
-    font-weight: bold;
+    font-weight: bold; /* 加粗标签字体 */
 }
 
 .no-data {
     font-size: 18px;
-    text-align: center;
+    text-align: center; /* 没有数据时的文本样式 */
     padding: 20px;
 }
 
 .table-container {
-    margin-top: 20px;
+    margin-top: 20px; /* 表格容器的上边距 */
 }
 
 .table-container table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* 表格边框合并 */
 }
 
 .table-container th,
 .table-container td {
     padding: 8px;
-    border: 1px solid #ddd;
-    text-align: left;
+    border: 1px solid #ddd; /* 单元格的边框和内边距 */
+    text-align: left; /* 文本左对齐 */
 }
 
 .table-container th {
-    background-color: #f5f5f5;
-    font-weight: bold;
+    background-color: #f5f5f5; /* 表头背景色 */
+    font-weight: bold; /* 表头字体加粗 */
 }
 
 .table-container tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* 隔行变色 */
 }
 
-.input-container .btn {
-    width: 100%; /* Adjusted width */
-    padding: 8px;
-    background-color: #007bff;
+.input-container .btn,
+.hot-stocks-container .btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff; /* 按钮背景色 */
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     color: #fff;
     font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    cursor: pointer; /* 鼠标手形图标 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* 按钮过渡效果 */
 }
 
-.input-container .btn:hover {
-    background-color: #0056b3;
+.input-container .btn:hover,
+.hot-stocks-container .btn:hover {
+    background-color: #0056b3; /* 鼠标悬停时按钮背景色 */
+    transform: translateY(-2px); /* 鼠标悬停时按钮上移 */
 }
+
+.input-container .btn:focus,
+.hot-stocks-container .btn:focus {
+    outline: none; /* 点击时去除轮廓线 */
+    box-shadow: 0 0 0 2px #007bff; /* 点击时增加阴影效果 */
+}
+
+.input-container input[type="text"],
+.input-container input[type="date"],
+.hot-stocks-container input[type="text"],
+.hot-stocks-container input[type="date"] {
+    width: 100%; /* 全宽度 */
+    padding: 10px;
+    margin-bottom: 10px; /* 底部外边距 */
+    border: 1px solid #ccc; /* 边框样式 */
+    border-radius: 8px; /* 边框圆角 */
+    box-sizing: border-box; /* 盒模型 */
+    transition: border-color 0.3s ease; /* 边框颜色过渡效果 */
+}
+
+.input-container input[type="text"]:focus,
+.input-container input[type="date"]:focus,
+.hot-stocks-container input[type="text"]:focus,
+.hot-stocks-container input[type="date"]:focus {
+    border-color: #007bff; /* 聚焦时边框颜色 */
+    outline: none; /* 去除聚焦时的轮廓 */
+}
+
+.input-container .form-control,
+.hot-stocks-container .form-control {
+    display: block; /* 默认块级元素 */
+    width: 100%; /* 全宽度 */
+}
+
+/* 你可能还有其他的样式定义，如果有的话，也应该包含在这里 */

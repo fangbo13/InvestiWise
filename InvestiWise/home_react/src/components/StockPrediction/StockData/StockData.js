@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import StockChart from './StockChart'; // 引入StockChart组件
 import 'echarts/lib/component/dataZoom'; // 引入dataZoom组件
+import HotStocks from '../HotStocks/HotStocks'; // 引入HotStocks组件
 import './StockData.css';
 
 function StockData() {
@@ -86,6 +87,11 @@ function StockData() {
             {/* 图表显示区域 */}
             <div className="chart-container">
                 {chartData ? <StockChart data={chartData} /> : <div className="no-data">No chart data available</div>}
+            </div>
+            
+            {/* 热门股票列表 */}    
+            <div className="hot-stocks-container">
+                <HotStocks />
             </div>
         </div>
     );
