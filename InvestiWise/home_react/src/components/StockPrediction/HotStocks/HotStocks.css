@@ -1,0 +1,37 @@
+.hot-stocks-container {
+    overflow-x: hidden; /* 禁止水平滑动 */
+}
+
+.hot-stocks-container .stock-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.hot-stocks-container .stock-symbol,
+.hot-stocks-container .stock-price,
+.hot-stocks-container .stock-change {
+    margin-right: 10px;
+    font-size: 14px; /* 缩小字体大小 */
+}
+
+.hot-stocks-container .stock-change.positive {
+    color: #4CAF50;
+}
+
+.hot-stocks-container .stock-change.negative {
+    color: #F44336;
+}
+
+.hot-stocks-container .stock-logo-placeholder {
+    /* 样式占位符的logo */
+    width: 30px; /* 或根据实际logo大小调整 */
+    height: 30px; /* 或根据实际logo大小调整 */
+    background-color: #ccc; /* 随意调整 */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    margin-right: 10px;
+}

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.http import JsonResponse
 from .models import StockData, StockPrediction
 from .serializers import StockDataSerializer, StockPredictionSerializer
 from .dataprice import fetch_stock_data, summary_statistics
@@ -60,3 +60,23 @@ class StockDataView(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class HotStocksDataView(APIView):
+    def get(self, request):
+        # 热门股票列表
+        stock_list = stock_list = ["AAPL", "GOOGL", "MSFT", "AMZN", "META", "TSLA", "BABA", "NVDA", "PYPL", "NFLX", "ADBE", "INTC", "CMCSA", "PEP", "CSCO", "AVGO", "TMUS", "QCOM", "TXN", "ABBV"]
+        data = []
+        for symbol in stock_list:
+            stock = yf.Ticker(symbol)
+            hist = stock.history(period="5d")
+            if not hist.empty:
+                last_close = hist['Close'].iloc[-1]
+                open_price = hist['Open'].iloc[-1]
+                change_percent = ((last_close - open_price) / open_price) * 100
+                data.append({
+                    'symbol': symbol,
+                    'last_close': last_close,
+                    'change_percent': change_percent
+                })
+        return Response(data)
