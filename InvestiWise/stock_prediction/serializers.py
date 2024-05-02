@@ -12,3 +12,12 @@ class StockPredictionSerializer(serializers.ModelSerializer):
         return value
 
 
+
+
+from .models import StockData
+class StockDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StockData
+        fields = '__all__'
+
+

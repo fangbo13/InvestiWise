@@ -1,0 +1,144 @@
+/* ============================== */
+/* Form Styling */
+/* ============================== */
+
+.stock-form {
+    max-width: 350px;
+    padding: 20px;
+    background: linear-gradient(145deg, rgb(255, 255, 255), #abc5df);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(12, 230, 246, 0.2); /* 统一阴影样式，突出边缘光效 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center; /* 将内容居中 */
+    overflow-y: auto;
+    border: 1px solid #dee2e6; /* 统一边框样式，增强边界可见性 */
+}
+
+.stock-form:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 2; 
+    
+}
+
+.stock-form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.stock-form input[type="text"],
+.stock-form input[type="number"],
+.stock-form select,
+.stock-form button[type="submit"] {
+    width: calc(100% - 40px); /* 控制宽度 */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin: 0 auto 20px; /* 控制居中和间距 */
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.stock-form input[type="text"]:focus,
+.stock-form input[type="number"]:focus,
+.stock-form select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.stock-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 8px top 50%;
+    padding-right: 30px; /* 确保下拉箭头不会干扰文字显示 */
+}
+
+.stock-form button[type="submit"] {
+    width: calc(100% - 40px); /* 控制宽度 */
+    padding: 12px 24px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.stock-form button[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ============================== */
+/* Main Layout Adjustments */
+/* ============================== */
+
+.stock-form-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 80px;
+}
+
+.stock-form {
+    flex-basis: 300px;
+    margin-left: -40px;
+}
+
+/* ============================== */
+/* Large Main Area Styling */
+/* ============================== */
+
+.roc-module,
+.classification-report,
+.prediction-results {
+    flex-grow: 2;
+    margin: 0 20px;
+    padding: 20px;
+    background: linear-gradient(145deg, rgb(255, 255, 255), #abc5df);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(12, 230, 246, 0.2); /* 统一阴影样式，突出边缘光效 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 600px;
+}
+
+.roc-module:hover,
+.classification-report:hover,
+.prediction-results:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 2; 
+}
+
+/* ============================== */
+/* Right-hand Side Smaller Modules */
+/* ============================== */
+
+.side-modules {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin-right: -40px;
+}
+
+/* ============================== */
+/* Individual Small Module Styling */
+/* ============================== */
+
+.classification-report,
+.prediction-results {
+    flex: 1;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    height: 290px;
+}
