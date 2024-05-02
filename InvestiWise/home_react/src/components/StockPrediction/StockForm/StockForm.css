@@ -1,34 +1,43 @@
+/* ============================== */
+/* Form Styling */
+/* ============================== */
+
 .stock-form {
-    max-width: 300px; /* Reduced max-width for a narrower form */
-    margin: 50px 0 0 50px; /* Adjusted margins to align form to the left */
+    max-width: 350px;
     padding: 20px;
-    background-color: #ffffff;
-    border-radius: 15px; /* Increased border radius for rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added box shadow for elevation effect */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added transition for smoother effects */
+    background: linear-gradient(145deg, rgb(255, 255, 255), #abc5df);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(12, 230, 246, 0.2); /* 统一阴影样式，突出边缘光效 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center; /* 将内容居中 */
+    overflow-y: auto;
+    border: 1px solid #dee2e6; /* 统一边框样式，增强边界可见性 */
 }
 
 .stock-form:hover {
-    transform: translateY(-2px); /* Lift the form slightly on hover */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhance box shadow on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 2; 
+    
 }
 
 .stock-form label {
     display: block;
-    margin-bottom: 10px; /* Adjusted margin for better spacing */
+    margin-bottom: 10px;
 }
 
 .stock-form input[type="text"],
 .stock-form input[type="number"],
 .stock-form select,
 .stock-form button[type="submit"] {
-    width: calc(100% - 40px); /* Adjusted width to account for increased padding */
-    padding: 10px; /* Reduced padding for smaller input fields */
+    width: calc(100% - 40px); /* 控制宽度 */
+    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 8px; /* Increased border radius for rounded corners */
+    border-radius: 8px;
     box-sizing: border-box;
-    margin-bottom: 20px;
-    transition: all 0.3s ease; /* Added transition for smoother hover effects */
+    margin: 0 auto 20px; /* 控制居中和间距 */
+    display: block;
+    transition: all 0.3s ease;
 }
 
 .stock-form input[type="text"]:focus,
@@ -42,26 +51,94 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007bff" width="18px" height="18px"><path d="M7 10l5 5 5-5H7z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
     background-repeat: no-repeat;
     background-position: right 8px top 50%;
-    padding-right: 30px;
+    padding-right: 30px; /* 确保下拉箭头不会干扰文字显示 */
 }
 
 .stock-form button[type="submit"] {
+    width: calc(100% - 40px); /* 控制宽度 */
+    padding: 12px 24px;
     background-color: #007bff;
     color: white;
-    padding: 12px 24px; /* Adjusted padding for better spacing */
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 18px;
-    font-weight: bold; /* Added font weight for emphasis */
-    text-transform: uppercase; /* Changed text to uppercase for consistency */
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .stock-form button[type="submit"]:hover {
     background-color: #0056b3;
-    transform: translateY(-2px); /* Added slight vertical movement on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added box shadow on hover for elevation effect */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ============================== */
+/* Main Layout Adjustments */
+/* ============================== */
+
+.stock-form-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 80px;
+}
+
+.stock-form {
+    flex-basis: 300px;
+    margin-left: -40px;
+}
+
+/* ============================== */
+/* Large Main Area Styling */
+/* ============================== */
+
+.roc-module,
+.classification-report,
+.prediction-results {
+    flex-grow: 2;
+    margin: 0 20px;
+    padding: 20px;
+    background: linear-gradient(145deg, rgb(255, 255, 255), #abc5df);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(12, 230, 246, 0.2); /* 统一阴影样式，突出边缘光效 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 600px;
+}
+
+.roc-module:hover,
+.classification-report:hover,
+.prediction-results:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 2; 
+}
+
+/* ============================== */
+/* Right-hand Side Smaller Modules */
+/* ============================== */
+
+.side-modules {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin-right: -40px;
+}
+
+/* ============================== */
+/* Individual Small Module Styling */
+/* ============================== */
+
+.classification-report,
+.prediction-results {
+    flex: 1;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    height: 290px;
 }
