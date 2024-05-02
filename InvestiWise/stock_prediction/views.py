@@ -65,7 +65,7 @@ class StockDataView(APIView):
 class HotStocksDataView(APIView):
     def get(self, request):
         # 热门股票列表
-        stock_list = stock_list = ["AAPL", "GOOGL", "MSFT", "AMZN", "META", "TSLA", "BABA", "NVDA", "PYPL", "NFLX", "ADBE", "INTC", "CMCSA", "PEP", "CSCO", "AVGO", "TMUS", "QCOM", "TXN", "ABBV"]
+        stock_list = ["AAPL", "GOOGL", "MSFT", "AMZN", "META", "TSLA", "BABA", "NVDA", "PYPL", "NFLX", "BAC","ADBE", "INTC", "CMCSA", "PEP", "CSCO", "AVGO", "TMUS", "QCOM", "TXN", "ABBV","JPM", "V", "HD"]
         data = []
         for symbol in stock_list:
             stock = yf.Ticker(symbol)

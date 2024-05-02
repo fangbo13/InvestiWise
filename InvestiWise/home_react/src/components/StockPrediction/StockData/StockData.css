@@ -1,10 +1,73 @@
+/* ============================== */
+/* Container Styling */
+/* ============================== */
+
 .container {
     display: flex;
-    justify-content: space-between; /* 子项之间保持均匀间距 */
-    align-items: flex-start; /* 项目对齐容器的起始位置 */
-    box-sizing: border-box; /* 确保内边距不影响宽度计算 */
-    gap: 30px; /* 子项之间的间隔 */
+    justify-content: space-between;
+    align-items: flex-start;
+    box-sizing: border-box;
+    gap: 30px;
 }
+
+.input-container,
+.chart-container,
+.hot-stocks-container {
+    padding: 20px;
+    background: linear-gradient(145deg, rgb(255, 255, 255), #abc5df); /* 使用深灰色渐变 */
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(12, 230, 246, 0.2); /* 加深阴影以增强层次感 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow-y: auto;
+    border: 1px solid #dee2e6; /* 保持边框以增强边界可见性 */
+}
+
+.input-container:hover,
+.chart-container:hover,
+.hot-stocks-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* 加重悬停时的阴影效果 */
+    z-index: 2; 
+}
+
+
+/* ============================== */
+/* Button and Input Styling */
+/* ============================== */
+
+.input-container .btn,
+.hot-stocks-container .btn {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.input-container .btn:hover,
+.hot-stocks-container .btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.input-container input[type="text"],
+.input-container input[type="date"],
+.hot-stocks-container input[type="text"],
+.hot-stocks-container input[type="date"] {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.input-container input[type="text"]:focus,
+.input-container input[type="date"]:focus,
+.hot-stocks-container input[type="text"]:focus,
+.hot-stocks-container input[type="date"]:focus {
+    border-color: #007bff;
+}
+
+/* Other CSS styles remain unchanged */
 
 .input-container {
     margin-left: -125px;
@@ -19,7 +82,6 @@
     min-height: 350px;
 }
 
-
 .input-container,
 .chart-container,
 .hot-stocks-container {
@@ -27,17 +89,16 @@
     background-color: #ffffff;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 过渡效果 */
-    overflow-y: auto; /* 如果内容过多，允许滚动 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow-y: auto;
 }
 
 .input-container:hover,
 .chart-container:hover,
 .hot-stocks-container:hover {
-    transform: translateY(-4px); /* 鼠标悬停时上移 */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 鼠标悬停时阴影效果更明显 */
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-
 
 .chart-container {
     min-height: 480px;
@@ -123,13 +184,13 @@
 .hot-stocks-container input[type="text"]:focus,
 .hot-stocks-container input[type="date"]:focus {
     border-color: #007bff; /* 聚焦时边框颜色 */
-    outline: none; /* 去除聚焦时的轮廓 */
+    outline:none; /* 去除聚焦时的轮廓 */
 }
 
 .input-container .form-control,
 .hot-stocks-container .form-control {
-    display: block; /* 默认块级元素 */
-    width: 100%; /* 全宽度 */
+display: block; /* 默认块级元素 /
+width: 100%; / 全宽度 */
 }
 
 /* 你可能还有其他的样式定义，如果有的话，也应该包含在这里 */
