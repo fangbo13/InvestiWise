@@ -1,21 +1,21 @@
 import * as echarts from 'echarts';
 import React, { useEffect, useRef } from 'react';
 
-const ROCModule = ({ data }) => {
+const ROCModule = ({ data, auc }) => {
     const chartRef = useRef(null);
 
     useEffect(() => {
         if (data && data.fpr && data.tpr && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
             const options = {
-                backgroundColor: '#ffffff', // 白色背景
+                backgroundColor: '#ffffff',
                 title: {
                     text: 'Receiver Operating Characteristic (ROC) Curve',
                     left: 'center',
                     textStyle: {
                         color: '#333',
                         fontWeight: 'bold',
-                        fontSize: 18 // 标题字号调整
+                        fontSize: 18
                     }
                 },
                 tooltip: {
@@ -24,13 +24,12 @@ const ROCModule = ({ data }) => {
                         return `False Positive Rate (FPR): ${params.value[0].toFixed(2)}<br/>True Positive Rate (TPR): ${params.value[1].toFixed(2)}`;
                     }
                 },
-                grid: { // 调整图表的内部边距
-                    left: '5%', // 左边距调整为 5%
-                    right: '10%', // 右边距
-                    bottom: '2%', // 下边距调整为 15%
+                grid: {
+                    left: '5%',
+                    right: '10%',
+                    bottom: '5%',
                     containLabel: true
                 },
-                
                 xAxis: {
                     type: 'value',
                     name: 'False Positive Rate (FPR)',
@@ -42,10 +41,10 @@ const ROCModule = ({ data }) => {
                         }
                     },
                     splitLine: {
-                        show: true, // 显示网格线
+                        show: true,
                         lineStyle: {
-                            color: '#ddd', // 网格线颜色调整
-                            type: 'dashed' // 虚线
+                            color: '#ddd',
+                            type: 'dashed'
                         }
                     }
                 },
@@ -60,10 +59,10 @@ const ROCModule = ({ data }) => {
                         }
                     },
                     splitLine: {
-                        show: true, // 显示网格线
+                        show: true,
                         lineStyle: {
-                            color: '#ddd', // 网格线颜色调整
-                            type: 'dashed' // 虚线
+                            color: '#ddd',
+                            type: 'dashed'
                         }
                     }
                 },
@@ -77,8 +76,8 @@ const ROCModule = ({ data }) => {
                         color: '#FF6347',
                         borderColor: '#FF6347',
                         borderWidth: 2,
-                        shadowColor: 'rgba(0, 0, 0, 0.3)', // 添加阴影效果
-                        shadowBlur: 10 // 阴影模糊程度
+                        shadowColor: 'rgba(0, 0, 0, 0.3)',
+                        shadowBlur: 10
                     },
                     lineStyle: {
                         color: '#FF6347',
@@ -100,11 +99,13 @@ const ROCModule = ({ data }) => {
             ref={chartRef} 
             style={{
                 width: '100%', 
-                height: '570px', 
+                height: '400px', 
                 borderRadius: '10px', 
                 overflow: 'hidden'
             }}>
+                <h2>ROC Curve of Test Set</h2>
             {!data && <p>No ROC Data Available</p>}
+            {auc && <p style={{ textAlign: 'center', marginTop: '10px' }}>ROC AUC: {auc.toFixed(3)}</p>}
         </div>
     );
 };

@@ -56,15 +56,19 @@ function StockForm() {
             }
 
             const data = await response.json();
-            // console.log("Received data:", data);  // 查看接收到的数据
+            console.log("Received data:", data);  // 查看接收到的数据
             setRocData({
                 fpr: data.prediction_results.roc_curve.fpr,
                 tpr: data.prediction_results.roc_curve.tpr
             });
-            // setRocData(data.prediction_results);  // 正确路径来设置ROC数据
             // console.log(data.fpr, data.tpr);
 
             setPredictionResults(data);
+            if (data && data.prediction_results && data.prediction_results.classification_report) {
+                setPredictionResults(data.prediction_results);
+            } else {
+                throw new Error("No classification report `available");
+            }
             setErrors({});
         } catch (error) {
             console.error('Error:', error);
@@ -139,7 +143,7 @@ function StockForm() {
             </div>
             <div className="side-modules">
                 <div className="classification-report">
-                    <ClassificationReportModule data={predictionResults} />
+                <ClassificationReportModule data={predictionResults} />
                 </div>
                 <div className="prediction-results">
                     <PredictionResultsModule results={predictionResults} />
