@@ -51,6 +51,7 @@ def prepare_data(data):
     X_test = scaler.transform(X_test)
     return X_train, X_test, y_train, y_test
 
+
 def train_model(stock_code, training_years, model_type='RF'):
     """Train a machine learning model using specified algorithm."""
     data = fetch_data(stock_code, training_years)
