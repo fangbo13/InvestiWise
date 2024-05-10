@@ -1,5 +1,5 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import ClassificationReportModule from '../PredictionDisplay/ClassificationReportModule';
 import PredictionResultsModule from '../PredictionDisplay/PredictionResultsModule';
 import ROCModule from '../PredictionDisplay/ROCModule';
@@ -10,17 +10,17 @@ function StockForm() {
     const [trainingYear, setTrainingYear] = useState('');
     const [validationYears, setValidationYears] = useState('');
     const [predictionDays, setPredictionDays] = useState('');
-    const [mlModel, setMlModel] = useState('SVM'); // 默认选中 'Support Vector Machine'
+    const [mlModel, setMlModel] = useState('SVM'); // Default to 'Support Vector Machine'
     const [errors, setErrors] = useState({});
     const [rocData, setRocData] = useState(null);
     const [predictionResults, setPredictionResults] = useState(null);
 
     const validateForm = () => {
         let newErrors = {};
-        if (!stockCode) newErrors.stockCode = "Please enter the stock code";
-        if (!trainingYear || trainingYear < 4 || trainingYear > 19) newErrors.trainingYear = "Training year must be between 4 and 19";
-        if (!validationYears || validationYears < 20 || validationYears > 30) newErrors.validationYears = "Validation years must be between 20 and 30";
-        if (!predictionDays || predictionDays < 1 || predictionDays > 30) newErrors.predictionDays = "Prediction days must be between 1 and 30";
+        if (!stockCode) newErrors.stockCode = "Please enter the stock code.";
+        if (!trainingYear || trainingYear < 4 || trainingYear > 19) newErrors.trainingYear = "Training year must be between 4 and 19.";
+        if (!validationYears || validationYears < 20 || validationYears > 30) newErrors.validationYears = "Validation years must be between 20 and 30.";
+        if (!predictionDays || predictionDays < 1 || predictionDays > 30) newErrors.predictionDays = "Prediction days must be between 1 and 30.";
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return false;
@@ -31,7 +31,7 @@ function StockForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!validateForm()) {
-            return; // 验证失败，中止提交
+            return; // Validation failed, stop submission.
         }
 
         const postData = {
@@ -56,19 +56,21 @@ function StockForm() {
             }
 
             const data = await response.json();
-            console.log("Received data:", data);  // 查看接收到的数据
+            console.log("Received data:", data);  // Log to check the structure
+
             setRocData({
                 fpr: data.prediction_results.roc_curve.fpr,
                 tpr: data.prediction_results.roc_curve.tpr
             });
-            // console.log(data.fpr, data.tpr);
 
-            setPredictionResults(data);
-            if (data && data.prediction_results && data.prediction_results.classification_report) {
-                setPredictionResults(data.prediction_results);
-            } else {
-                throw new Error("No classification report `available");
-            }
+            setPredictionResults({
+                ...data.prediction_results,  // includes roc_auc, classification_report
+                pred: data.prediction_results.pred,
+                stock_code: data.saved_data.stock_code,
+                prediction_days: data.saved_data.prediction_days,
+                ml_model: data.saved_data.ml_model,
+            });
+
             setErrors({});
         } catch (error) {
             console.error('Error:', error);
@@ -139,7 +141,8 @@ function StockForm() {
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>
             <div className="roc-module">
-                <ROCModule data={rocData} />
+            <ROCModule data={rocData} auc={predictionResults && predictionResults.roc_auc ? predictionResults.roc_auc : null} />
+
             </div>
             <div className="side-modules">
                 <div className="classification-report">
