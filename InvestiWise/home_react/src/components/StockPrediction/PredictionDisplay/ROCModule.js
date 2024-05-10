@@ -5,7 +5,7 @@ const ROCModule = ({ data, auc }) => {
     const chartRef = useRef(null);
 
     useEffect(() => {
-        if (data && data.fpr && data.tpr && chartRef.current) {
+        if (data && data.fpr && data.tpr && auc && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
             const options = {
                 backgroundColor: '#ffffff',
@@ -25,14 +25,17 @@ const ROCModule = ({ data, auc }) => {
                     }
                 },
                 grid: {
-                    left: '5%',
+                    left: '10%',  // Increase from '5%' to give more space
                     right: '10%',
-                    bottom: '5%',
+                    bottom: '10%',  // Adjust bottom space to ensure enough room for AUC text
+                    top: '10%',     // Provide more space at the top for the title
                     containLabel: true
                 },
                 xAxis: {
                     type: 'value',
                     name: 'False Positive Rate (FPR)',
+                    nameLocation: 'middle',  // Adjust location of the axis name
+                    nameGap: 30,             // Gap between the axis name and axis line
                     min: 0,
                     max: 1,
                     axisLine: {
@@ -51,6 +54,8 @@ const ROCModule = ({ data, auc }) => {
                 yAxis: {
                     type: 'value',
                     name: 'True Positive Rate (TPR)',
+                    nameLocation: 'middle',  // Adjust location of the axis name
+                    nameGap: 50,             // Increase the gap for better visibility
                     min: 0,
                     max: 1,
                     axisLine: {
@@ -83,7 +88,20 @@ const ROCModule = ({ data, auc }) => {
                         color: '#FF6347',
                         width: 3
                     }
-                }]
+                }],
+                graphic: {
+                    elements: [{
+                        type: 'text',
+                        style: {
+                            text: `AUC: ${auc.toFixed(3)}`,
+                            font: '14px Arial',
+                            textAlign: 'center',
+                            fill: '#666'
+                        },
+                        left: 'center',
+                        bottom: 20  // Adjust bottom position for visibility
+                    }]
+                }
             };
 
             chartInstance.setOption(options);
@@ -92,20 +110,18 @@ const ROCModule = ({ data, auc }) => {
                 chartInstance.dispose();
             };
         }
-    }, [data]);
+    }, [data, auc]);
 
     return (
         <div 
             ref={chartRef} 
             style={{
                 width: '100%', 
-                height: '400px', 
+                height: '570px',  // Adjust the height if necessary to fit your display
                 borderRadius: '10px', 
                 overflow: 'hidden'
             }}>
-                <h2>ROC Curve of Test Set</h2>
             {!data && <p>No ROC Data Available</p>}
-            {auc && <p style={{ textAlign: 'center', marginTop: '10px' }}>ROC AUC: {auc.toFixed(3)}</p>}
         </div>
     );
 };

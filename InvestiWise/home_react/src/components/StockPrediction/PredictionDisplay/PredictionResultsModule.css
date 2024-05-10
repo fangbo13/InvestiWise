@@ -1,0 +1,39 @@
+/* PredictionResultsModule.css */
+.prediction-container {
+    padding: 25px;
+    background-color: #ffffff; /* Lighter background for better contrast */
+    border-radius: 10px;
+    border: 1px solid #e2e2e2;
+    margin-top: 30px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    max-width: 500px; /* Ensures the container doesn't get too wide on larger screens */
+    margin: 20px auto; /* Centers the container */
+}
+
+h2 {
+    color: #333;
+    text-align: center;
+    font-size: 24px; /* Slightly larger for better readability */
+    margin-bottom: 15px; /* Space between title and content */
+}
+
+.go_up, .go_down {
+    font-weight: bold;
+    padding: 3px 7px; /* Padding makes the label stand out more */
+    border-radius: 5px; /* Rounded corners for labels */
+    color: #fff; /* White text for better readability */
+}
+
+.go_up {
+    background-color: #28a745; /* Bootstrap success color, now as a background */
+}
+
+.go_down {
+    background-color: #dc3545; /* Bootstrap danger color, now as a background */
+}
+
+.prediction-container span {
+    font-size: 1.1em; /* Adjusted font size for balance */
+    display: inline-block; /* Helps with padding and background color */
+    margin: 0 5px; /* Space around the prediction text */
+}
