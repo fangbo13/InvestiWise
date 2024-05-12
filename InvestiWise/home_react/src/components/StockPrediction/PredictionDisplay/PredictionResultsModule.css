@@ -1,39 +1,73 @@
-/* PredictionResultsModule.css */
+/* Enhanced overall container styling */
 .prediction-container {
-    padding: 25px;
-    background-color: #ffffff; /* Lighter background for better contrast */
-    border-radius: 10px;
-    border: 1px solid #e2e2e2;
-    margin-top: 30px;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-    max-width: 500px; /* Ensures the container doesn't get too wide on larger screens */
-    margin: 20px auto; /* Centers the container */
-}
-
-h2 {
-    color: #333;
+    padding: 10px;
+    margin: 30px auto;
+    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59); /* Vivid and colorful gradient */
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    color: #ffffff;
+    max-width: 700px;
     text-align: center;
-    font-size: 24px; /* Slightly larger for better readability */
-    margin-bottom: 15px; /* Space between title and content */
+    transition: transform 0.3s ease-in-out; /* Smooth transform on hover */
 }
 
-.go_up, .go_down {
-    font-weight: bold;
-    padding: 3px 7px; /* Padding makes the label stand out more */
-    border-radius: 5px; /* Rounded corners for labels */
-    color: #fff; /* White text for better readability */
+.prediction-container:hover {
+    transform: scale(1.03); /* Slight scale up on hover for interactivity */
 }
 
+/* More dynamic heading style */
+h2 {
+    font-family: 'Arial', sans-serif; /* Clean, modern font */
+    font-size: 26px; /* Larger font size for better visibility */
+    text-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+    margin-bottom: 25px;
+}
+
+/* General enhancements for results */
+.prediction-result {
+    font-size: 22px;
+    font-weight: bold; /* Bolder weight for emphasis */
+    border-radius: 10px;
+    padding: 15px 25px;
+    display: inline-flex; /* Use flexbox for better alignment */
+    align-items: center; /* Vertically align items */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    animation: fadeIn 2s; /* Smooth fade in effect */
+    margin-right: 10px; /* Add space between the text and the button */
+}
+
+/* Keyframes for the fadeIn animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Specific styles for 'UP' predictions */
 .go_up {
-    background-color: #28a745; /* Bootstrap success color, now as a background */
+    background-color: #4CAF50;
+    border: 1px solid #367B37;
+    transition: background-color 0.3s ease; /* Smooth background color transition on hover */
+    cursor: pointer;
+    padding: 10px 20px; /* Adjust padding */
+    border-radius: 12px; /* Rounded corners for button */
 }
 
+.go_up:hover {
+    background-color: #5AD45A; /* Lighter green on hover for visual feedback */
+    box-shadow: 0 0 10px #4CAF50; /* Glow effect on hover */
+}
+
+/* Specific styles for 'DOWN' predictions */
 .go_down {
-    background-color: #dc3545; /* Bootstrap danger color, now as a background */
+    background-color: #F44336;
+    border: 1px solid #C33525;
+    transition: background-color 0.3s ease; /* Smooth background color transition on hover */
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 12px;
 }
 
-.prediction-container span {
-    font-size: 1.1em; /* Adjusted font size for balance */
-    display: inline-block; /* Helps with padding and background color */
-    margin: 0 5px; /* Space around the prediction text */
+.go_down:hover {
+    background-color: #FF6656; /* Lighter red on hover for visual feedback */
+    box-shadow: 0 0 10px #F44336; /* Glow effect on hover */
 }

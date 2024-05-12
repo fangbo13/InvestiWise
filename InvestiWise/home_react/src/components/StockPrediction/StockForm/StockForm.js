@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react';
 import ClassificationReportModule from '../PredictionDisplay/ClassificationReportModule';
 import PredictionResultsModule from '../PredictionDisplay/PredictionResultsModule';
 import ROCModule from '../PredictionDisplay/ROCModule';
@@ -15,12 +15,25 @@ function StockForm() {
     const [rocData, setRocData] = useState(null);
     const [predictionResults, setPredictionResults] = useState(null);
 
+    const showAlert = (message) => {
+        alert(message);
+    };
+
     const validateForm = () => {
         let newErrors = {};
         if (!stockCode) newErrors.stockCode = "Please enter the stock code.";
-        if (!trainingYear || trainingYear < 4 || trainingYear > 19) newErrors.trainingYear = "Training year must be between 4 and 19.";
-        if (!validationYears || validationYears < 20 || validationYears > 30) newErrors.validationYears = "Validation years must be between 20 and 30.";
-        if (!predictionDays || predictionDays < 1 || predictionDays > 30) newErrors.predictionDays = "Prediction days must be between 1 and 30.";
+        if (!trainingYear || trainingYear < 4 || trainingYear > 19) {
+            showAlert("Training year must be between 4 and 19.");
+            return false;
+        }
+        if (!validationYears || validationYears < 20 || validationYears > 30) {
+            showAlert("Validation years must be between 20 and 30.");
+            return false;
+        }
+        if (!predictionDays || predictionDays < 1 || predictionDays > 30) {
+            showAlert("Prediction days must be between 1 and 30.");
+            return false;
+        }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return false;
@@ -136,17 +149,16 @@ function StockForm() {
                             onClick={() => setMlModel('SVM')}>SVM</button>
                         <button type="button" className={`btn ${mlModel === 'RF' ? 'btn-primary' : 'btn-outline-primary'}`}
                             onClick={() => setMlModel('RF')}>Random Forest</button>
-                </div>
+                    </div>
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>
             <div className="roc-module">
-            <ROCModule data={rocData} auc={predictionResults && predictionResults.roc_auc ? predictionResults.roc_auc : null} />
-
+                <ROCModule data={rocData} auc={predictionResults && predictionResults.roc_auc ? predictionResults.roc_auc : null} />
             </div>
             <div className="side-modules">
                 <div className="classification-report">
-                <ClassificationReportModule data={predictionResults} />
+                    <ClassificationReportModule data={predictionResults} />
                 </div>
                 <div className="prediction-results">
                     <PredictionResultsModule results={predictionResults} />
