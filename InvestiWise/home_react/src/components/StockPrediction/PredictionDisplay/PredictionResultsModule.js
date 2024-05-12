@@ -6,7 +6,7 @@ function PredictionResultsModule({ results }) {
         return <div>Loading prediction results...</div>;
     }
 
-    const { predictions, best_params, classification_report, roc_auc, stock_code, prediction_days, ml_model } = results;
+    const { predictions, stock_code, prediction_days, ml_model } = results;
 
     // 示例：选择显示数组中的最后一个预测结果
     const lastPrediction = predictions[predictions.length - 1];
