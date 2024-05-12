@@ -24,11 +24,13 @@ class InputView(APIView):
         serializer = StockPredictionSerializer(data=request.data)
         if serializer.is_valid():
             saved_instance = serializer.save()  # 保存实例
+            prediction_days = saved_instance.prediction_days # 获取预测天数
             # 从保存的实例调用机器学习模型
             prediction_results = train_model(
                 stock_code=saved_instance.stock_code,
                 training_years=saved_instance.training_year,
-                model_type=saved_instance.ml_model
+                model_type=saved_instance.ml_model,
+                prediction_days=saved_instance.prediction_days  # 确保接收预测天数
             )
             # 检查是否有错误返回
             if "error" in prediction_results:
@@ -92,24 +94,3 @@ class HotStocksDataView(APIView):
                 })
         return Response(data)
     
-
-class MachineLearningView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = StockPredictionSerializer(data=request.data)
-        if serializer.is_valid():
-            # 从验证后的数据中获取股票信息和其他参数
-            stock_code = serializer.validated_data['stock_code']
-            training_years = serializer.validated_data['training_year']
-            validation_percent = serializer.validated_data['validation_years']
-            ml_model = serializer.validated_data['ml_model']
-            
-            # 调用机器学习模块进行预测
-            prediction_results = prepare_and_train(stock_code, training_years, validation_percent, ml_model)
-            
-            # 返回预测结果
-            return Response({
-                "message": "Prediction completed successfully.",
-                "results": prediction_results
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
