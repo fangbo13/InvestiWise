@@ -1,12 +1,14 @@
 import yfinance as yf
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.http import JsonResponse
+
+from .dataprice import fetch_stock_data, summary_statistics
+from .ml_module import train_model
 from .models import StockData, StockPrediction
 from .serializers import StockDataSerializer, StockPredictionSerializer
-from .dataprice import fetch_stock_data, summary_statistics
 
 
 class InputView(APIView):
@@ -17,20 +19,31 @@ class InputView(APIView):
             serializer = StockPredictionSerializer(stock_predictions, many=True)
             # 返回响应
             return Response(serializer.data)
-    
+
     def post(self, request):
         serializer = StockPredictionSerializer(data=request.data)
         if serializer.is_valid():
-            # 可选：保存到数据库
-            serializer.save()
-            # 准备后续处理（例如：提取股票代码）
-            # stock_code = serializer.validated_data['stock_code']
-            # 返回成功响应
-            return Response({"message": "Data received successfully"}, status=status.HTTP_201_CREATED)
-        else:
-            # 返回错误信息
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            saved_instance = serializer.save()  # 保存实例
+            prediction_days = saved_instance.prediction_days # 获取预测天数
+            # 从保存的实例调用机器学习模型
+            prediction_results = train_model(
+                stock_code=saved_instance.stock_code,
+                training_years=saved_instance.training_year,
+                model_type=saved_instance.ml_model,
+                prediction_days=saved_instance.prediction_days  # 确保接收预测天数
+            )
+            # 检查是否有错误返回
+            if "error" in prediction_results:
+                return Response({"error": prediction_results["error"]}, status=status.HTTP_400_BAD_REQUEST)
 
+            # 成功情况下返回机器学习的结果
+            return Response({
+                "message": "Data received and prediction made successfully",
+                "saved_data": serializer.data,
+                "prediction_results": prediction_results
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Create your views here.
 class StockDataView(APIView):
@@ -80,3 +93,4 @@ class HotStocksDataView(APIView):
                     'change_percent': change_percent
                 })
         return Response(data)
+    

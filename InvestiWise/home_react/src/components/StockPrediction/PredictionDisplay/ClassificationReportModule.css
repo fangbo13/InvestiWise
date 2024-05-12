@@ -1,0 +1,18 @@
+/* 应用到整个表格、行和单元格上的样式 */
+.classification_report .table, 
+.classification_report th, 
+.classification_report td {
+    background-color: transparent !important; /* 强制背景透明 */
+    box-shadow: none !important; /* 无阴影 */
+    border: none !important; /* 无边框 */
+    background-image: none !important; /* 无背景图片 */
+}
+
+/* 特别针对斑马线样式的透明处理 */
+.classification_report .table-striped>tbody>tr:nth-of-type(odd),
+.classification_report .table-striped>tbody>tr:nth-of-type(even) {
+    background-color: transparent !important;
+}
+.classification_report {
+    font-family: Arial, sans-serif;
+}

@@ -83,7 +83,6 @@
 
 .stock-form-container {
     display: flex;
-    justify-content: space-between;
     margin: 80px;
 }
 
@@ -106,7 +105,7 @@
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(12, 230, 246, 0.2); /* 统一阴影样式，突出边缘光效 */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    height: 600px;
+
 }
 
 .roc-module:hover,
@@ -116,7 +115,10 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 2; 
 }
-
+.roc-module{
+    height: 600px;
+    max-width: 800px;
+}
 /* ============================== */
 /* Right-hand Side Smaller Modules */
 /* ============================== */
@@ -140,5 +142,41 @@
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    height: 290px;
+    min-width: 450px;
+  
+}
+
+/* ============================== */
+/* Individual Small Module Styling */
+/* ============================== */
+.model-selection-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.model-selection-buttons button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    font-size: 16px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.model-selection-buttons button.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.model-selection-buttons button.btn-outline-primary {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.model-selection-buttons button.btn-primary:hover,
+.model-selection-buttons button.btn-outline-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
 }
