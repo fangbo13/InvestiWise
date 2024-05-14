@@ -48,3 +48,13 @@ def moving_average_view(request):
     data['Moving Average'] = data['Adj Close'].rolling(window=window).mean()
     data_json = data[['Adj Close', 'Moving Average']].dropna().to_json(date_format='iso')
     return JsonResponse({'data': data_json})
+
+
+def daily_return_view(request):
+    stock_code = request.GET.get('stock_code', 'AAPL')
+    start_date = request.GET.get('start_date', '2020-01-01')
+    end_date = request.GET.get('end_date', pd.Timestamp.now().strftime('%Y-%m-%d'))
+    data = get_stock_prices(stock_code, start_date, end_date)
+    data['Daily Return'] = data['Adj Close'].pct_change()
+    data_json = data[['Adj Close', 'Daily Return']].dropna().to_json(date_format='iso')
+    return JsonResponse({'data': data_json})
