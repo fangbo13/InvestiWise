@@ -21,6 +21,7 @@
     transition: all 0.4s ease; /* Smooth transition for hover effects */
     border: 2px solid #007bff; /* Solid border with the same blue */
     display: inline-block; /* Necessary for padding and margin adjustments */
+    margin-right: 80px;
 }
 
 /* Hover effect for the link */
