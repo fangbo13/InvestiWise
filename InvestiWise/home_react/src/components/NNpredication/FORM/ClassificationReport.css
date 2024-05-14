@@ -1,0 +1,23 @@
+/* ClassificationReportModule.css */
+.classification_report {
+    margin: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.table .no-data {
+    text-align: center;
+}

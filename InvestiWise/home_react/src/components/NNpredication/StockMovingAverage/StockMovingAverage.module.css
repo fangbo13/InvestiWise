@@ -1,0 +1,112 @@
+:root {
+    --primary-100: #d4eaf7;
+    --primary-200: #b6ccd8;
+    --primary-300: #3b3c3d;
+    --accent-100: #71c4ef;
+    --accent-200: #00668c;
+    --text-100: #1d1c1c;
+    --text-200: #313d44;
+    --bg-100: #fffefb;
+    --bg-200: #f5f4f1;
+    --bg-300: #cccbc8;
+}
+
+/* 全局设置 */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-100);
+    color: var(--text-100);
+}
+
+/* 容器布局 */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+}
+
+/* 表单容器样式 */
+.formContainer {
+    background-color: var(--bg-200);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-right: 40px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.formContainer h2 {
+    margin-bottom: 20px;
+    color: var(--accent-200);
+}
+
+/* 表单组样式 */
+.formGroup {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.formGroup label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: var(--text-200);
+}
+
+.formGroup input {
+    width: calc(100% - 12px);
+    padding: 10px;
+    border: 1px solid var(--primary-200);
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* 按钮样式 */
+.button {
+    background: linear-gradient(90deg, var(--accent-100) 0%, var(--accent-200) 100%);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background 0.3s ease-in-out;
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+}
+
+.button:hover {
+    background: linear-gradient(90deg, var(--accent-200) 0%, var(--accent-100) 100%);
+}
+
+/* 图表容器样式 */
+.chartContainer {
+    flex-grow: 1;
+    background-color: var(--bg-200);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* 表单提示信息样式 */
+.loading {
+    font-size: 18px;
+    color: var(--text-200);
+}

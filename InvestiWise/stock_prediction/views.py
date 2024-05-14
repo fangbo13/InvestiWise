@@ -24,13 +24,15 @@ class InputView(APIView):
         serializer = StockPredictionSerializer(data=request.data)
         if serializer.is_valid():
             saved_instance = serializer.save()  # 保存实例
+            test_size = saved_instance.validation_years / 100.0
             prediction_days = saved_instance.prediction_days # 获取预测天数
             # 从保存的实例调用机器学习模型
             prediction_results = train_model(
                 stock_code=saved_instance.stock_code,
                 training_years=saved_instance.training_year,
                 model_type=saved_instance.ml_model,
-                prediction_days=saved_instance.prediction_days  # 确保接收预测天数
+                prediction_days=saved_instance.prediction_days,  # 确保接收预测天数
+                test_size=test_size
             )
             # 检查是否有错误返回
             if "error" in prediction_results:

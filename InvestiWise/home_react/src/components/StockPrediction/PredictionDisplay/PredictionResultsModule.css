@@ -1,6 +1,6 @@
 /* Enhanced overall container styling */
 .prediction-container {
-    padding: 10px;
+    padding: 6px;
     margin: 30px auto;
     background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59); /* Vivid and colorful gradient */
     border-radius: 15px;

@@ -1,0 +1,75 @@
+/* Footer container styling */
+.footer-container {
+    padding: 25px;
+    text-align: center; /* Center alignment of the content */
+    background-color: transparent; /* Transparent background */
+    box-shadow: none; /* Remove shadow for a cleaner look */
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* General link styling */
+.footer-link {
+    color: #007bff; /* Use primary blue color for text */
+    background-color: transparent; /* Transparent background for the link */
+    text-decoration: none; /* No underline */
+    font-size: 20px; /* Slightly larger font size for better readability */
+    font-weight: bold; /* Bold font weight */
+    padding: 15px 35px; /* Increased padding for a larger click area */
+    border-radius: 50px; /* Rounded corners for smooth edges */
+    transition: all 0.4s ease; /* Smooth transition for hover effects */
+    border: 2px solid #007bff; /* Solid border with the same blue */
+    display: inline-block; /* Necessary for padding and margin adjustments */
+    margin-right: 80px;
+}
+
+/* Hover effect for the link */
+.footer-link:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Slight blue background on hover for subtle effect */
+    color: #0056b3; /* Darker blue on hover */
+    border-color: #0056b3; /* Darker border on hover */
+    box-shadow: 0 8px 16px rgba(0, 123, 255, 0.2); /* Slight glow effect on hover */
+    transform: translateY(-3px); /* Slight rise effect */
+}
+
+/* Active state styling */
+.footer-link:active {
+    transform: translateY(1px); /* Press down effect when active */
+    background-color: rgba(0, 123, 255, 0.2); /* Deeper background color for pressed effect */
+}
+
+/* Animation for the link to draw attention */
+@keyframes pulse {
+    0% {
+        border-color: rgba(0, 123, 255, 0.7);
+    }
+    70% {
+        border-color: rgba(0, 123, 255, 0);
+    }
+    100% {
+        border-color: rgba(0, 123, 255, 0.7);
+    }
+}
+
+.footer-link:focus {
+    outline: none; /* Removes outline on focus for cleaner look */
+    animation: pulse 2s infinite;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+    .footer-link {
+        padding: 12px 28px; /* Smaller padding on smaller screens */
+        font-size: 18px; /* Slightly smaller font size on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-link {
+        width: 90%; /* Full width button on very small screens */
+        display: block; /* Block display to take the full width */
+        margin: 0 auto; /* Center the link horizontally */
+        padding: 10px 20px; /* Adjust padding for very small screens */
+    }
+}

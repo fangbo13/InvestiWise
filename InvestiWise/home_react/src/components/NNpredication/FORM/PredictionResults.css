@@ -1,0 +1,17 @@
+/* styles.css */
+.prediction-container {
+    font-size: 16px;
+    margin: 20px;
+}
+
+.prediction-result {
+    font-weight: bold;
+}
+
+.go_up {
+    color: green;
+}
+
+.go_down {
+    color: red;
+}
