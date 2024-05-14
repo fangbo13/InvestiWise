@@ -1,7 +1,9 @@
 import React from 'react';
 import LSTMModel from './Lstmprediction/LSTMModel';
 import StockData from '../StockPrediction/StockData/StockData';
-import StockMovingAverage from './StockMovingAverage/StockMovingAverage'; 
+import StockMovingAverage from './StockMovingAverage/StockMovingAverage';
+import StockDailyReturn from './DailyReturn/StockDailyReturn';
+
 import './NNModel.css';
 
 function NNPrediction() {
@@ -10,6 +12,7 @@ function NNPrediction() {
             <LSTMModel/>
             <StockData/>
             <StockMovingAverage/>
+            <StockDailyReturn/>
         </div>
     );
 }
