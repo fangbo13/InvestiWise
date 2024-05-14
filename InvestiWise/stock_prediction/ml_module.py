@@ -42,23 +42,22 @@ def feature_engineering(data, prediction_days):
 
     return data.dropna()
 
-def prepare_data(data, prediction_days=5):
+def prepare_data(data, prediction_days=5, test_size=0.2):
     """Prepare training and testing datasets for machine learning."""
     data = feature_engineering(data, prediction_days)
     feature_columns = [col for col in data.columns if col not in ['Close', 'Future_Close', 'Target']]
     X = data[feature_columns]
     y = data['Target']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
     return X_train, X_test, y_train, y_test
 
 
-
-def train_model(stock_code, training_years, model_type='RF', prediction_days=5):
+def train_model(stock_code, training_years, model_type='RF', prediction_days=5, test_size=0.2):
     data = fetch_data(stock_code, training_years)
-    X_train, X_test, y_train, y_test = prepare_data(data, prediction_days)
+    X_train, X_test, y_train, y_test = prepare_data(data, prediction_days, test_size)
 
     if model_type == 'RF':
         model = RandomForestClassifier(random_state=42)

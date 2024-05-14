@@ -5,7 +5,7 @@
 .stock-form {
     max-width: 350px;
     padding: 20px;
-    background: linear-gradient(145deg, rgb(255, 255, 255), #abc5df);
+    background: #f5f4f1;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(12, 230, 246, 0.2); /* 统一阴影样式，突出边缘光效 */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -59,7 +59,7 @@
 .stock-form button[type="submit"] {
     width: calc(100% - 40px); /* 控制宽度 */
     padding: 12px 24px;
-    background-color: #007bff;
+    background-color: #1d1c1c;
     color: white;
     border: none;
     border-radius: 8px;
@@ -101,7 +101,7 @@
     flex-grow: 2;
     margin: 0 20px;
     padding: 20px;
-    background: linear-gradient(145deg, rgb(255, 255, 255), #abc5df);
+    background: #f5f4f1;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(12, 230, 246, 0.2); /* 统一阴影样式，突出边缘光效 */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -164,9 +164,9 @@
 }
 
 .model-selection-buttons button.btn-primary {
-    background-color: #007bff;
+    background-color: #1d1c1c;
     color: white;
-    border: 1px solid #007bff;
+    border: 1px solid #1d1c1c;
 }
 
 .model-selection-buttons button.btn-outline-primary {

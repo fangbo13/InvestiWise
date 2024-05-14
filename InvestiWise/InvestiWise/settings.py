@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'home',
     'rest_framework',
     'stock_prediction',
+    'lstm_prediction',
 ]
 
 REST_FRAMEWORK = {
