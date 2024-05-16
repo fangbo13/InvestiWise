@@ -3,13 +3,13 @@ import pandas as pd
 import yfinance as yf
 from django.http import JsonResponse
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+
 from .ml_module import train_model  # 假设你已经有了 lstm_predict 函数
 from .models import LSTMPrediction
 from .serializers import LSTMSerializer
-
 
 class LSTMInputView(APIView):
     def post(self, request):

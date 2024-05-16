@@ -1,4 +1,3 @@
-// Input.js
 import React, { useState } from 'react';
 import { useModelData } from '../Lstmprediction/ModelContext';
 
@@ -15,7 +14,10 @@ function Input() {
             training_year: parseInt(trainingYear),
             prediction_days: parseInt(predictionDays)
         };
-        loadData(data);  // Calling loadData from Context
+        const errorMessage = await loadData(data);  // Calling loadData from Context
+        if (errorMessage) {
+            alert(errorMessage);  // Display alert with error message
+        }
     };
 
     return (
@@ -31,7 +33,6 @@ function Input() {
 
             <button type="submit">Predict</button>
         </form>
-
     );
 }
 

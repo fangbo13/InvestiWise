@@ -32,11 +32,14 @@ export const ModelProvider = ({ children }) => {
                     classificationReport: result.prediction_results.classification_report
                 });
                 console.log('Data received and saved successfully:', result);
+                return null; // No error
             } else {
                 console.error('Failed to fetch predictions:', result);
+                return result.error || 'Failed to fetch predictions'; // Return error message
             }
         } catch (error) {
             console.error('Error fetching data:', error);
+            return 'Invalid stock code or Data not found  '; // Return specific error message
         }
     };
 

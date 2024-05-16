@@ -60,6 +60,7 @@ body {
 }
 
 .formGroup input {
+    background: #ecf0f1;
     width: calc(100% - 12px);
     padding: 10px;
     border: 1px solid var(--primary-200);
