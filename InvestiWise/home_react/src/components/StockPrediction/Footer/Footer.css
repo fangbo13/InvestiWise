@@ -11,7 +11,7 @@
 
 /* General link styling */
 .footer-link {
-    color: #007bff; /* Use primary blue color for text */
+    color: #000000; /* Use primary blue color for text */
     background-color: transparent; /* Transparent background for the link */
     text-decoration: none; /* No underline */
     font-size: 20px; /* Slightly larger font size for better readability */
@@ -19,16 +19,16 @@
     padding: 15px 35px; /* Increased padding for a larger click area */
     border-radius: 50px; /* Rounded corners for smooth edges */
     transition: all 0.4s ease; /* Smooth transition for hover effects */
-    border: 2px solid #007bff; /* Solid border with the same blue */
+    border: 2px solid #000000; /* Solid border with the same blue */
     display: inline-block; /* Necessary for padding and margin adjustments */
     margin-right: 80px;
 }
 
 /* Hover effect for the link */
 .footer-link:hover {
-    background-color: rgba(0, 123, 255, 0.1); /* Slight blue background on hover for subtle effect */
-    color: #0056b3; /* Darker blue on hover */
-    border-color: #0056b3; /* Darker border on hover */
+    background-color: rgba(57, 151, 251, 0.1); /* Slight blue background on hover for subtle effect */
+    color: #a5a5a8; /* Darker blue on hover */
+    border-color: #333435; /* Darker border on hover */
     box-shadow: 0 8px 16px rgba(0, 123, 255, 0.2); /* Slight glow effect on hover */
     transform: translateY(-3px); /* Slight rise effect */
 }

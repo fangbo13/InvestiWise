@@ -30,6 +30,7 @@
 .stock-form input[type="number"],
 .stock-form select,
 .stock-form button[type="submit"] {
+    background: #ecf0f1;
     width: calc(100% - 40px); /* 控制宽度 */
     padding: 10px;
     border: 1px solid #ccc;
@@ -139,7 +140,7 @@
     flex: 1;
     margin-bottom: 20px;
     padding: 10px;
-    background-color: #fff;
+    background-color: #f5f4f1;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     min-width: 450px;

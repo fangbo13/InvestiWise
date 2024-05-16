@@ -102,6 +102,7 @@ function StockForm() {
                         value={stockCode}
                         onChange={(e) => setStockCode(e.target.value)}
                         className="form-control"
+                        placeholder="Enter stock code "
                         required
                     />
                     {errors.stockCode && <p className="error-message">{errors.stockCode}</p>}
@@ -114,6 +115,7 @@ function StockForm() {
                         value={trainingYear}
                         onChange={(e) => setTrainingYear(e.target.value)}
                         className="form-control"
+                        placeholder="Enter training year "
                         required
                     />
                     {errors.trainingYear && <p className="error-message">{errors.trainingYear}</p>}
@@ -126,6 +128,7 @@ function StockForm() {
                         value={validationYears}
                         onChange={(e) => setValidationYears(e.target.value)}
                         className="form-control"
+                        placeholder="Enter validation years "
                         required
                     />
                     {errors.validationYears && <p className="error-message">{errors.validationYears}</p>}
@@ -138,6 +141,7 @@ function StockForm() {
                         value={predictionDays}
                         onChange={(e) => setPredictionDays(e.target.value)}
                         className="form-control"
+                        placeholder="Enter prediction days "
                         required
                     />
                     {errors.predictionDays && <p className="error-message">{errors.predictionDays}</p>}
@@ -161,6 +165,7 @@ function StockForm() {
                     <ClassificationReportModule data={predictionResults} />
                 </div>
                 <div className="prediction-results">
+                    <h3>Prediction Results</h3>
                     <PredictionResultsModule results={predictionResults} />
                 </div>
             </div>

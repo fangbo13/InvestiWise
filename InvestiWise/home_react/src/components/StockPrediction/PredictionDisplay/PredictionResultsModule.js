@@ -15,7 +15,7 @@ function PredictionResultsModule({ results }) {
 
     return (
         <div>
-            <h2>Prediction Results</h2>
+
             <div className="prediction-container">
                 Predictions based on the {ml_model} model, {stock_code} will go
                 <span className={`prediction-result ${predictionColor}`}> {message} </span> on

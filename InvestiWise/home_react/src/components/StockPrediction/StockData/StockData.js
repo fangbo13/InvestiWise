@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import StockChart from './StockChart'; // 引入StockChart组件
 import 'echarts/lib/component/dataZoom'; // 引入dataZoom组件
+import React, { useState } from 'react';
 import HotStocks from '../HotStocks/HotStocks'; // 引入HotStocks组件
+import StockChart from './StockChart'; // 引入StockChart组件
 import './StockData.css';
 
 function StockData() {
@@ -53,6 +53,7 @@ function StockData() {
                             value={stockCode}
                             onChange={(e) => setStockCode(e.target.value)}
                             className="form-control"
+                            placeholder="Enter stock code (e.g., AAPL, GOOGL)"
                             required
                         />
                     </div>
@@ -65,6 +66,7 @@ function StockData() {
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
                                 className="form-control"
+                                placeholder="Enter start date"
                                 required
                             />
                         </div>
@@ -76,6 +78,7 @@ function StockData() {
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
                                 className="form-control"
+                                placeholder="Enter end date"
                                 required
                             />
                         </div>
