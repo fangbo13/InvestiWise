@@ -3,6 +3,7 @@
 }
 
 .hot-stocks-container .stock-item {
+    background: #ecf0f1;
     display: flex;
     align-items: center;
     margin-bottom: 10px;

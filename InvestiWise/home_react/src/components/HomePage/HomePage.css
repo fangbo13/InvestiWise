@@ -49,10 +49,10 @@ body, html {
 .brand-name {
     font-size: 7rem;
     font-family: 'Times New Roman', sans-serif;
-    color: rgb(167, 25, 0);
+    color: rgb(0, 174, 105);
     letter-spacing: 0.05em;
-    text-shadow: 2px 2px 4px rgba(167, 25, 0, 0.9); /* 阴影颜色与color相同 */
-    -webkit-text-shadow: 2px 2px 4px rgba(167, 25, 0, 0.9);
+    text-shadow: 2px 2px 4px rgba(27, 221, 13, 0.9); /* 阴影颜色与color相同 */
+    -webkit-text-shadow: 2px 2px 4px rgba(39, 167, 0, 0.9);
     
 }
 
@@ -105,11 +105,11 @@ body, html {
     }
 
     .stock-up {
-        color: #f44336;
+        color: #4caf50;
     }
 
     .stock-down {
-        color: #4caf50;
+        color: #f44336;
     }
 
     .stock-item:hover {
@@ -184,12 +184,12 @@ body, html {
 }
 
 .btn-hover.btn-fill {
-    border: 2px solid #B22222;
+    border: 2px solid #408d48;
     border-radius: 10px;
 }
 
 .btn-hover.btn-fill:after {
-    background: #B22222;
+    background: #347527;
     opacity: .5;
     -moz-transform: translateX(-50%) translateY(-50%);
     -ms-transform: translateX(-50%) translateY(-50%);
@@ -212,7 +212,7 @@ body, html {
 } */
 
 /* .video-btn:hover {
-    background-color: #B22222;
+    background-color: #408d86;
     color: white; 
 } */
 
@@ -227,34 +227,34 @@ body, html {
     height: 25vh; /* Adjust height if necessary */
     z-index: 1;
 }
-
 .parallax > use {
-    animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
-  }
+    animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+}
 
-  .parallax > use:nth-child(1) {
-    fill: #DC143C; /* 猩红色 (Crimson) */
+.parallax > use:nth-child(1) {
+    fill: #008000; /* Green */
     animation-delay: -2s;
     animation-duration: 7s;
 }
 
 .parallax > use:nth-child(2) {
-    fill: #b80909; /* 红色 (Red) */
+    fill: #00A550; /* Stock Green */
     animation-delay: -3s;
     animation-duration: 10s;
 }
 
 .parallax > use:nth-child(3) {
-    fill: #B22222; /* 火砖色 (Firebrick) */
+    fill: #00C853; /* Emerald Green */
     animation-delay: -4s;
     animation-duration: 13s;
 }
 
 .parallax > use:nth-child(4) {
-    fill: #8B0000; /* 深红色 (Dark Red) */
+    fill: #66BB6A; /* Medium Green */
     animation-delay: -5s;
     animation-duration: 17s;
 }
+
 
 
 @keyframes move-forever {

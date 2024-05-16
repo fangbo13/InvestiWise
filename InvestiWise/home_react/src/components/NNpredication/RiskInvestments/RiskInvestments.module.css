@@ -1,0 +1,238 @@
+/* RiskInvestments.module.css */
+:root {
+    --primary-100: #d4eaf7;
+    --primary-200: #b6ccd8;
+    --primary-300: #3b3c3d;
+    --accent-100: #71c4ef;
+    --accent-200: #00668c;
+    --text-100: #1d1c1c;
+    --text-200: #313d44;
+    --bg-100: #fffefb;
+    --bg-200: #f5f4f1;
+    --bg-300: #cccbc8;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-100);
+    color: var(--text-100);
+}
+
+.container {
+    display: flex;
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: var(--bg-200);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 1000px;
+    margin: 20px auto;
+}
+
+.investmentSection {
+    background-color: var(--bg-200);
+    padding: 20px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 2px solid var(--bg-300);
+}
+
+.header {
+    margin-bottom: 20px;
+    text-align: left;
+    width: 100%;
+}
+
+.header h3 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--text-100);
+}
+
+.header p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: var(--text-100);
+}
+
+.stocks {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.stockCard, .viewAllCard {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 120px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.stockCode {
+    font-size: 14px;
+    background-color: var(--primary-200);
+    border-radius: 10px;
+    padding: 5px;
+    color: var(--text-100);
+    margin-bottom: 10px;
+}
+
+.riskCoefficient {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-100);
+}
+
+.viewAllCard {
+    background-color: var(--primary-100);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 5px;
+    width: 120px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.viewAllText {
+    font-size: 14px;
+    color: var(--primary-300);
+    margin-bottom: 5px;
+}
+
+.viewAllButton {
+    font-size: 20px;
+    color: var(--primary-300);
+}
+
+.tableSection {
+    padding: 20px;
+    background-color: var(--bg-200);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px;
+    background-color: #cccbc8;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    font-size: 16px;
+    color: var(--text-100);
+    margin-bottom: 5px;
+}
+
+.formGroup input {
+    padding: 10px;
+    border: 1px solid var(--bg-300);
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #ecf0f1;
+}
+
+.submitButton {
+    padding: 12px;
+    background-color:#1d1c1c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+    background:#5b5656;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 8px;
+    border: 1px solid var(--bg-300);
+    border-radius: 15px;
+    background-color: var(--bg-100);
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+}
+
+.result p {
+    margin: 0;
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--accent-200);
+}
+
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popupContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    max-height: 80%;
+    overflow-y: auto;
+    position: relative;
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.stockGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.popup .stockCard {
+    cursor: default;
+    width: 120px;
+}

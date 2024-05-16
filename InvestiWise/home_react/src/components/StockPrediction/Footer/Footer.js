@@ -6,6 +6,7 @@ function Footer() {
     return (
         <div className="footer-container">
             <Link to="/" className="footer-link">Back to Homepage</Link>
+            <Link to="/predict" className="footer-link">Try Stock Prediction</Link>
             <Link to="/lstm" className="footer-link">Try LSTM Prediction</Link>
 
         </div>
