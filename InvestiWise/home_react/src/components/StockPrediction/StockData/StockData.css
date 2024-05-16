@@ -46,7 +46,7 @@
 
 .input-container .btn:hover,
 .hot-stocks-container .btn:hover {
-    background-color: #0056b3;
+    background-color: linear-gradient(90deg, var(--accent-200) 0%, var(--accent-100) 100%);
     transform: translateY(-2px);
 }
 
@@ -170,6 +170,7 @@
 .input-container input[type="date"],
 .hot-stocks-container input[type="text"],
 .hot-stocks-container input[type="date"] {
+    background: #ecf0f1;
     width: 100%; /* 全宽度 */
     padding: 10px;
     margin-bottom: 10px; /* 底部外边距 */
@@ -189,8 +190,8 @@
 
 .input-container .form-control,
 .hot-stocks-container .form-control {
-display: block; /* 默认块级元素 /
-width: 100%; / 全宽度 */
+    display: block; /* 默认块级元素 /
+    width: 100%; / 全宽度 */
 }
 
 /* 你可能还有其他的样式定义，如果有的话，也应该包含在这里 */

@@ -1,13 +1,15 @@
+import numpy as np
+import pandas as pd
+import yfinance as yf
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.http import JsonResponse
-import yfinance as yf
-import pandas as pd
+from rest_framework.decorators import api_view
+from .ml_module import train_model  # 假设你已经有了 lstm_predict 函数
 from .models import LSTMPrediction
 from .serializers import LSTMSerializer
-from .ml_module import train_model  # 假设你已经有了 lstm_predict 函数
+
 
 class LSTMInputView(APIView):
     def post(self, request):
@@ -48,3 +50,52 @@ def moving_average_view(request):
     data['Moving Average'] = data['Adj Close'].rolling(window=window).mean()
     data_json = data[['Adj Close', 'Moving Average']].dropna().to_json(date_format='iso')
     return JsonResponse({'data': data_json})
+
+
+def daily_return_view(request):
+    stock_code = request.GET.get('stock_code', 'AAPL')
+    start_date = request.GET.get('start_date', '2020-01-01')
+    end_date = request.GET.get('end_date', pd.Timestamp.now().strftime('%Y-%m-%d'))
+    data = get_stock_prices(stock_code, start_date, end_date)
+    data['Daily Return'] = data['Adj Close'].pct_change()
+    data_json = data[['Adj Close', 'Daily Return']].dropna().to_json(date_format='iso')
+    return JsonResponse({'data': data_json})
+
+
+@api_view(['GET'])
+def get_risk_coefficients(request):
+    stocks = ['AAPL', 'TSLA', 'EBAY', 'MSFT', 'GOOGL', 'AMZN', 'NFLX', 'NVDA', 'AMD', 'INTC', 'PYPL', 'CSCO', 'META', 'CRM', 'IBM', 'QCOM']
+# 添加更多的股票代码
+    data = {}
+
+    for stock in stocks:
+        df = yf.download(stock, period='1y')
+        df['Daily Return'] = df['Close'].pct_change()
+        returns = df['Daily Return'].dropna()
+        risk_coefficient = returns.std()
+        data[stock] = risk_coefficient
+
+    return Response(data)
+
+
+@api_view(['GET'])
+def calculate_risk(request):
+    start_date = request.GET.get('startDate')
+    end_date = request.GET.get('endDate')
+    stock_code = request.GET.get('stockCode')
+
+    if not start_date or not end_date or not stock_code:
+        return Response({'error': 'Start date, end date and stock code are required'}, status=400)
+
+    try:
+        df = yf.download(stock_code, start=start_date, end=end_date)
+        if df.empty:
+            return Response({'error': 'No data found for the given date range and stock code'}, status=400)
+        df['Daily Return'] = df['Close'].pct_change()
+        returns = df['Daily Return'].dropna()
+        if returns.empty:
+            return Response({'error': 'Not enough data to calculate risk'}, status=400)
+        risk_coefficient = returns.std()
+        return Response({'risk_coefficient': risk_coefficient})
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)

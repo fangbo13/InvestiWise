@@ -2,7 +2,7 @@
     position: relative;
     overflow-y: scroll;
     max-height: 100vh;
-    background: linear-gradient(45deg, #003973, #E5E5BE, #2C3E50, #232526);  
+    background: linear-gradient(45deg, #2C3E50, #4A6274, #30393f, #232731);  
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
     padding: 20px;
