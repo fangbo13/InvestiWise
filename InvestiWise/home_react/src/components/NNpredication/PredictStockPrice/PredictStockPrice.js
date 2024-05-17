@@ -18,9 +18,9 @@ const PredictStockPrice = () => {
         historical: [],
         dates: [],
         test: [],
+        test_predictions: [],
         predictions: [],
-        future_predictions: [],
-        future_prediction_dates: []
+        prediction_dates: []
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -46,11 +46,11 @@ const PredictStockPrice = () => {
     };
 
     const renderChart = useCallback((ctx) => {
-        const { historical, dates, test, predictions, future_predictions, future_prediction_dates } = chartData;
+        const { historical, dates, test, test_predictions, predictions, prediction_dates } = chartData;
         return new Chart(ctx, {
             type: 'line',
             data: {
-                labels: [...dates, ...future_prediction_dates],
+                labels: [...dates, ...prediction_dates],
                 datasets: [
                     {
                         label: 'Historical',
@@ -65,14 +65,14 @@ const PredictStockPrice = () => {
                         fill: false
                     },
                     {
-                        label: 'Predictions',
-                        data: [...new Array(dates.length - predictions.length).fill(null), ...predictions],
+                        label: 'Test Predictions',
+                        data: [...new Array(dates.length - test_predictions.length).fill(null), ...test_predictions],
                         borderColor: 'red',
                         fill: false
                     },
                     {
                         label: 'Future Predictions',
-                        data: [...new Array(dates.length).fill(null), ...future_predictions],
+                        data: [...new Array(dates.length).fill(null), ...predictions],
                         borderColor: 'orange',
                         fill: false
                     }

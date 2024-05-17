@@ -56,3 +56,39 @@ def get_trained_lstm_model(stock_code='AAPL', start_date='2010-01-01', end_date=
     model.fit(x_train, y_train, epochs=50, batch_size=32, callbacks=[early_stop])
     
     return model, scaler, df, x_train, y_train, x_test, y_test
+
+def predict_future_prices(stock_code='AAPL', days_to_predict=7):
+    model, scaler, df, x_train, y_train, x_test, y_test = get_trained_lstm_model(stock_code=stock_code)
+    data = df['Close'].values.reshape(-1, 1)
+    scaled_data = scaler.transform(data)
+    
+    # 预测测试集
+    test_predictions = model.predict(x_test)
+    test_predictions = scaler.inverse_transform(test_predictions)
+    y_test = scaler.inverse_transform(y_test.reshape(-1, 1))
+    
+    # 使用您提供的方法预测未来N天
+    sequence_length = 60
+    x_input = scaled_data[-sequence_length:].reshape(1, sequence_length, 1)
+    future_predictions = []
+    for _ in range(days_to_predict):
+        predicted_price = model.predict(x_input)
+        future_predictions.append(predicted_price[0, 0])
+        
+        # 将 predicted_price 重新形状为 (1, 1, 1) 以匹配 x_input 的形状
+        predicted_price_reshaped = np.reshape(predicted_price, (1, 1, 1))
+        x_input = np.append(x_input[:, 1:, :], predicted_price_reshaped, axis=1)
+    
+    future_predictions = scaler.inverse_transform(np.array(future_predictions).reshape(-1, 1)).flatten()
+    historical_data = df['Close'].tolist()
+    dates = df.index.strftime('%Y-%m-%d').tolist()
+    prediction_dates = pd.date_range(start=dates[-1], periods=days_to_predict + 1, inclusive='right').strftime('%Y-%m-%d').tolist()
+    
+    return {
+        'historical': historical_data,
+        'dates': dates,
+        'test': y_test.flatten().tolist(),
+        'test_predictions': test_predictions.flatten().tolist(),
+        'predictions': future_predictions.tolist(),
+        'prediction_dates': prediction_dates
+    }
