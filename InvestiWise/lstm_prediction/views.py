@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .lstm_model import get_trained_lstm_model
+from .lstm_model import get_trained_lstm_model, predict_future_prices
 from .ml_module import train_model
 from .models import LSTMPrediction
 from .serializers import LSTMSerializer
@@ -111,37 +111,6 @@ def predict_stock_price(request):
     stock_code = request.GET.get('stockCode', 'AAPL')
     days_to_predict = int(request.GET.get('days', 7))  # 默认预测7天
     
-    model, scaler, df, x_train, y_train, x_test, y_test = get_trained_lstm_model(stock_code=stock_code)
+    result = predict_future_prices(stock_code=stock_code, days_to_predict=days_to_predict)
     
-    data = df['Close'].values.reshape(-1, 1)
-    scaled_data = scaler.transform(data)
-    
-    # 模型预测
-    predictions = model.predict(x_test)
-    predictions = scaler.inverse_transform(predictions).flatten()
-    y_test = scaler.inverse_transform(y_test.reshape(-1, 1)).flatten()
-
-    # 预测未来N天
-    sequence_length = 60
-    x_input = scaled_data[-sequence_length:].reshape(1, sequence_length, 1)
-    future_predictions = []
-    for _ in range(days_to_predict):
-        predicted_price = model.predict(x_input)
-        future_predictions.append(predicted_price[0, 0])
-        predicted_price_reshaped = np.reshape(predicted_price, (1, 1, 1))
-        x_input = np.append(x_input[:, 1:, :], predicted_price_reshaped, axis=1)
-    
-    future_predictions = scaler.inverse_transform(np.array(future_predictions).reshape(-1, 1)).flatten()
-    historical_data = df['Close'].tolist()
-    dates = df.index.strftime('%Y-%m-%d').tolist()
-    prediction_dates = pd.date_range(start=dates[-1], periods=days_to_predict + 1, inclusive='right').strftime('%Y-%m-%d').tolist()
-    
-    return JsonResponse({
-        'historical': historical_data,
-        'dates': dates,
-        'test': y_test.tolist(),
-        'predictions': predictions.tolist(),
-        'prediction_dates': dates[-len(y_test):],
-        'future_predictions': future_predictions.tolist(),
-        'future_prediction_dates': prediction_dates
-    })
+    return JsonResponse(result)
