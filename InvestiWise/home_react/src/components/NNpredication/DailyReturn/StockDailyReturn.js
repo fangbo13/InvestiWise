@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Chart, registerables } from 'chart.js';
-import zoomPlugin from 'chartjs-plugin-zoom';
 import 'chartjs-adapter-date-fns';
+import zoomPlugin from 'chartjs-plugin-zoom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './StockDailyReturn.module.css';
 
 Chart.register(...registerables, zoomPlugin);
@@ -117,19 +117,34 @@ function StockDailyReturn() {
                     <div className={styles.formGroup}>
                         <label>
                             Stock Code:
-                            <input type="text" value={stockCode} onChange={e => setStockCode(e.target.value)} />
+                            <input 
+                                type="text" 
+                                value={stockCode} 
+                                onChange={e => setStockCode(e.target.value)} 
+                                placeholder="Enter stock code" 
+                            />
                         </label>
                     </div>
                     <div className={styles.formGroup}>
                         <label>
                             Start Date:
-                            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+                            <input 
+                                type="date" 
+                                value={startDate} 
+                                onChange={e => setStartDate(e.target.value)} 
+                                placeholder="Enter start date" 
+                            />
                         </label>
                     </div>
                     <div className={styles.formGroup}>
                         <label>
                             End Date:
-                            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+                            <input 
+                                type="date" 
+                                value={endDate} 
+                                onChange={e => setEndDate(e.target.value)} 
+                                placeholder="Enter end date" 
+                            />
                         </label>
                     </div>
                     <button type="submit" className={styles.button}>Get Daily Return</button>

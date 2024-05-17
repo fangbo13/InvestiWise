@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Chart, registerables } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
-import styles from './StockMovingAverage.module.css';  // 引入 CSS 模块文件
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import styles from './StockMovingAverage.module.css'; // 引入 CSS 模块文件
 
 Chart.register(...registerables, zoomPlugin);
 
@@ -118,25 +118,45 @@ function StockMovingAverage() {
                     <div className={styles.formGroup}>
                         <label>
                             Stock Code:
-                            <input type="text" value={stockCode} onChange={e => setStockCode(e.target.value)} />
+                            <input 
+                                type="text" 
+                                value={stockCode} 
+                                onChange={e => setStockCode(e.target.value)} 
+                                placeholder="Enter stock code" 
+                            />
                         </label>
                     </div>
                     <div className={styles.formGroup}>
                         <label>
                             Start Date:
-                            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+                            <input 
+                                type="date" 
+                                value={startDate} 
+                                onChange={e => setStartDate(e.target.value)} 
+                                placeholder="Enter start date" 
+                            />
                         </label>
                     </div>
                     <div className={styles.formGroup}>
                         <label>
                             End Date:
-                            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+                            <input 
+                                type="date" 
+                                value={endDate} 
+                                onChange={e => setEndDate(e.target.value)} 
+                                placeholder="Enter end date" 
+                            />
                         </label>
                     </div>
                     <div className={styles.formGroup}>
                         <label>
                             Moving Average Window:
-                            <input type="number" value={window} onChange={e => setWindow(e.target.value)} />
+                            <input 
+                                type="number" 
+                                value={window} 
+                                onChange={e => setWindow(e.target.value)} 
+                                placeholder="Enter moving average window" 
+                            />
                         </label>
                     </div>
                     <button type="submit" className={styles.button}>Get Moving Average</button>

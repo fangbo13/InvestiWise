@@ -1,11 +1,12 @@
 import React from 'react';
-import LSTMModel from './Lstmprediction/LSTMModel';
+import Footer from '../StockPrediction/Footer/Footer';
 import StockData from '../StockPrediction/StockData/StockData';
-import StockMovingAverage from './StockMovingAverage/StockMovingAverage';
 import StockDailyReturn from './DailyReturn/StockDailyReturn';
-import Footer from '../StockPrediction/Footer/Footer'; 
+import LSTMModel from './Lstmprediction/LSTMModel';
 import './NNModel.css';
+import PredictStockPrice from './PredictStockPrice/PredictStockPrice';
 import RiskInvestments from './RiskInvestments/RiskInvestments';
+import StockMovingAverage from './StockMovingAverage/StockMovingAverage';
 
 function NNPrediction() {
     return (
@@ -15,6 +16,7 @@ function NNPrediction() {
             <StockMovingAverage/>
             <StockDailyReturn/>
             <RiskInvestments/>
+            <PredictStockPrice/>    
             <Footer /> 
         </div>
     );
