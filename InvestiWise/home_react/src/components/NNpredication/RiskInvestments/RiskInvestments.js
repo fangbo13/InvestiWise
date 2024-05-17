@@ -1,6 +1,6 @@
 // RiskInvestments.js
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import styles from './RiskInvestments.module.css';
 
 const RiskInvestments = () => {
@@ -51,14 +51,14 @@ const RiskInvestments = () => {
         <div className={styles.container}>
             <div className={styles.investmentSection}>
                 <div className={styles.header}>
-                    <h3>Investments</h3>
-                    <p>Change since last login</p>
+                    <h3 className={styles.headerText}>Investments</h3>
+                    <p className={styles.subHeaderText}>Change since last login</p>
                 </div>
                 <div className={styles.stocks}>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
-                        Object.keys(data).slice(0, 3).map((stockKey) => (
+                        Object.keys(data).slice(0, 4).map((stockKey) => (
                             <div key={stockKey} className={styles.stockCard}>
                                 <div className={styles.stockCode}>{stockKey}</div>
                                 <div className={styles.riskCoefficient}>
@@ -104,7 +104,7 @@ const RiskInvestments = () => {
                             id="stockCode"
                             name="stockCode"
                             value={inputData.stockCode}
-                            placeholder="Enter stock code"  // 添加占位符
+                            placeholder="Enter stock code"
                             onChange={handleInputChange}
                             required
                         />
