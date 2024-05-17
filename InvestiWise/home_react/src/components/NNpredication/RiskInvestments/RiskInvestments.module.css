@@ -45,25 +45,31 @@ body {
     margin-bottom: 20px;
     text-align: left;
     width: 100%;
+    background-color: #cccbc8; /* Set the background color */
+    border-radius: 10px; /* Add some border radius */
+    padding: 10px; /* Add padding */
+    max-width: 170px;
+    margin-left: -210px;
 }
 
-.header h3 {
+.headerText {
     margin: 0;
     font-size: 24px;
     color: var(--text-100);
 }
 
-.header p {
+.subHeaderText {
     margin: 5px 0 0;
     font-size: 14px;
     color: var(--text-100);
 }
 
 .stocks {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
     width: 100%;
+    justify-items: center;
 }
 
 .stockCard, .viewAllCard {
@@ -89,20 +95,23 @@ body {
 .riskCoefficient {
     font-size: 16px;
     font-weight: bold;
-    color: var(--text-100);
+    color: var (--text-100);
 }
 
 .viewAllCard {
     background-color: var(--primary-100);
     border-radius: 10px;
+    max-width: 140px;
     padding: 15px;
     margin: 5px;
-    width: 120px;
+    width: 100%;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    align-self: center; /* Center horizontally */
+    grid-column: span 2; /* Ensure it takes up the full width of the grid */
 }
 
 .viewAllText {
@@ -127,11 +136,11 @@ body {
 }
 
 .form {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 15px;
     width: 100%;
-    max-width: 300px;
+    max-width: 500px;
     background-color: #cccbc8;
     padding: 20px;
     border-radius: 10px;
@@ -158,8 +167,9 @@ body {
 }
 
 .submitButton {
+    grid-column: span 2;
     padding: 12px;
-    background-color:#1d1c1c;
+    background-color: #1d1c1c;
     color: white;
     border: none;
     border-radius: 5px;
@@ -170,7 +180,7 @@ body {
 }
 
 .submitButton:hover {
-    background:#5b5656;
+    background: #5b5656;
 }
 
 .result {
@@ -204,6 +214,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000; /* Ensure the popup appears above other elements */
 }
 
 .popupContent {
@@ -215,6 +226,7 @@ body {
     max-height: 80%;
     overflow-y: auto;
     position: relative;
+    z-index: 3; /* Ensure the content appears above the popup background */
 }
 
 .closeButton {
@@ -226,10 +238,10 @@ body {
 }
 
 .stockGrid {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
-    justify-content: center;
+    justify-items: center;
 }
 
 .popup .stockCard {
