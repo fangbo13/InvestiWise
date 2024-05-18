@@ -99,7 +99,9 @@ const PredictStockPrice = () => {
                         zoom: {
                             wheel: {
                                 enabled: true,
-                                mode: 'xy'
+                                mode: 'xy',
+                                // Mark event listener as passive
+                                wheel: { passive: true }
                             },
                             pinch: {
                                 enabled: true,
