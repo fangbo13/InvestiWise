@@ -4,9 +4,11 @@ import StockData from '../StockPrediction/StockData/StockData';
 import StockDailyReturn from './DailyReturn/StockDailyReturn';
 import LSTMModel from './Lstmprediction/LSTMModel';
 import './NNModel.css';
+import NewsSentiment from './NewsSentiment/NewsSentiment';
 import PredictStockPrice from './PredictStockPrice/PredictStockPrice';
 import RiskInvestments from './RiskInvestments/RiskInvestments';
 import StockMovingAverage from './StockMovingAverage/StockMovingAverage';
+
 
 function NNPrediction() {
     return (
@@ -16,7 +18,8 @@ function NNPrediction() {
             <StockMovingAverage/>
             <StockDailyReturn/>
             <RiskInvestments/>
-            <PredictStockPrice/>    
+            <PredictStockPrice/>
+            <NewsSentiment />
             <Footer /> 
         </div>
     );

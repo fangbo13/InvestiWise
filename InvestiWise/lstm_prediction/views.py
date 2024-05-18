@@ -114,3 +114,16 @@ def predict_stock_price(request):
     result = predict_future_prices(stock_code=stock_code, days_to_predict=days_to_predict)
     
     return JsonResponse(result)
+
+
+from .utils import get_reddit_sentiments
+
+
+@api_view(['GET'])
+def get_sentiment(request):
+    query = request.query_params.get('query')
+    if not query or len(query) > 100:
+        return Response({'error': 'Query parameter is required and should be less than 100 characters'}, status=400)
+
+    sentiment_data = get_reddit_sentiments(query)
+    return Response(sentiment_data)
