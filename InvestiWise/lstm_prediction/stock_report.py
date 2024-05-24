@@ -6,8 +6,13 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import yfinance as yf
 from django.http import HttpResponse
+from reportlab.graphics.shapes import Drawing, Line, String
+from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import (Image, PageBreak, Paragraph, SimpleDocTemplate,
+                                Spacer, Table, TableStyle)
 
 logger = logging.getLogger(__name__)
 
@@ -26,70 +31,198 @@ def calculate_annual_return(data):
     return annual_return
 
 def create_stock_chart(data, stock_code):
+    data['MA10'] = data['Close'].rolling(window=10).mean()
+
     plt.figure(figsize=(10, 5))
-    plt.plot(data.index, data['Close'])
+    plt.plot(data.index, data['Close'], label='Adjusted Close Price')
+    plt.plot(data.index, data['MA10'], label='10-Day Moving Average', linestyle='--')
     plt.title(f"{stock_code} Stock Price - Last 1 Year")
     plt.xlabel("Date")
-    plt.ylabel("Close Price")
+    plt.ylabel("Price")
+    plt.legend()
     plt.grid(True)
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
     plt.savefig(temp_file.name, format='png')
     plt.close()  # 确保图像关闭
     return temp_file.name
 
+def create_daily_return_chart(data, stock_code):
+    last_month_data = data['Close'].iloc[-30:]
+    daily_returns = last_month_data.pct_change().dropna()
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(daily_returns.index, daily_returns, label='Daily Return')
+    plt.title(f"{stock_code} Daily Return - Last 1 Month")
+    plt.xlabel("Date")
+    plt.ylabel("Daily Return")
+    plt.legend()
+    plt.grid(True)
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+    plt.savefig(temp_file.name, format='png')
+    plt.close()  # 确保图像关闭
+    return temp_file.name, daily_returns
+
+def generate_ma_insights(data):
+    current_price = data['Close'].iloc[-1]
+    current_ma10 = data['MA10'].iloc[-1]
+
+    if current_price > current_ma10:
+        trend = "uptrend"
+        position = "above"
+    else:
+        trend = "downtrend"
+        position = "below"
+
+    return current_price, current_ma10, trend, position
+
+def create_title(stock_code):
+    drawing = Drawing(500, 50)
+    drawing.add(String(250, 40, f"Investment Report for {stock_code}", fontSize=24, fillColor=colors.black, textAnchor='middle'))
+    drawing.add(Line(50, 30, 450, 30, strokeColor=colors.black, strokeWidth=1))
+    drawing.add(String(450, 10, f"Generated on {datetime.now().strftime('%Y-%m-%d')}", fontSize=12, fillColor=colors.grey, textAnchor='end'))
+    return drawing
+
 def generate_pdf_report(stock_code):
     try:
         stock_data = fetch_stock_data(stock_code)
         chart_path = create_stock_chart(stock_data, stock_code)
+        daily_return_chart_path, daily_returns = create_daily_return_chart(stock_data, stock_code)
         last_close_price = stock_data['Close'].iloc[-1]
         annual_return = calculate_annual_return(stock_data)
+        current_price, current_ma10, trend, position = generate_ma_insights(stock_data)
 
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{stock_code}_report.pdf"'
 
-        c = canvas.Canvas(response, pagesize=letter)
-        width, height = letter
+        doc = SimpleDocTemplate(response, pagesize=letter)
+        elements = []
+
+        styles = getSampleStyleSheet()
+        subtitle_style = styles['Heading2']
+        normal_style = styles['BodyText']
 
         # 标题
-        c.setFont("Helvetica-Bold", 18)
-        c.drawString(100, height - 50, f"Investment Report for {stock_code}")
-        c.line(100, height - 55, width - 100, height - 55)
+        title = create_title(stock_code)
+        elements.append(title)
+        elements.append(Spacer(1, 10))  # 添加空白行
 
-        # 绘制图像 (调整X轴位置、宽度和高度)
-        image_x = 50  # 左移图像
-        image_y = height - 400
-        image_width = 500
-        image_height = 300
-        c.drawImage(chart_path, image_x, image_y, width=image_width, height=image_height)
+        # 图像
+        elements.append(Paragraph(f"Stock Price Chart for {stock_code}", subtitle_style))
+        elements.append(Spacer(1, 12))  # 添加空白行
+        img = Image(chart_path)
+        img.drawHeight = 3 * inch
+        img.drawWidth = 6 * inch
+        elements.append(img)
+        elements.append(Spacer(1, 20))  # 添加空白行
 
-        # 绘制文本内容
-        c.setFont("Helvetica", 12)
-        text = c.beginText(50, image_y - 30)  # 位置在图像下方
-        text.setFont("Helvetica", 12)
-        
-        # 第一行
-        text.textOut("Stock Code: ")
-        text.setFont("Helvetica-Bold", 12)
-        text.textLine(f"{stock_code}")
+        # 表格
+        data = [
+            ["Stock Code", stock_code],
+            ["Closing Price on", f"${last_close_price:.2f}"],
+            ["Annual Return", f"{annual_return:.2f}%"],
+            ["Current Price", f"${current_price:.2f}"],
+            ["10-Day Moving Average", f"${current_ma10:.2f}"],
+            ["Trend", f"The stock is currently in a {trend} and is {position} the 10-day moving average."]
+        ]
 
-        # 第二行
-        text.setFont("Helvetica", 12)
-        text.textOut(f"Closing Price on {datetime.now().strftime('%Y-%m-%d')}: ")
-        text.setFont("Helvetica-Bold", 12)
-        text.textLine(f"${last_close_price:.2f}")
+        table = Table(data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
 
-        # 第三行
-        text.setFont("Helvetica", 12)
-        text.textOut("Annual Return: ")
-        text.setFont("Helvetica-Bold", 12)
-        text.textLine(f"{annual_return:.2f}%")
+        elements.append(table)
+        elements.append(Spacer(1, 20))  # 添加空白行
 
-        c.drawText(text)
+        # MA10解释
+        explanation = """
+        <b>Explanation:</b><br/>
+        The 10-day moving average (MA10) is the average closing price over the past 10 days.
+        It helps to smooth out price data and identify trends.
+        If the current price is above the MA10, it indicates an uptrend.
+        If it's below, it indicates a downtrend.
+        """
+        elements.append(Paragraph(explanation, normal_style))
 
-        c.save()
+        # 添加分页符
+        elements.append(PageBreak())
+
+        # Daily Return 图表
+        elements.append(Paragraph(f"Daily Return Chart for {stock_code}", subtitle_style))
+        elements.append(Spacer(1, 12))  # 添加空白行
+        daily_return_img = Image(daily_return_chart_path)
+        daily_return_img.drawHeight = 3 * inch
+        daily_return_img.drawWidth = 6 * inch
+        elements.append(daily_return_img)
+        elements.append(Spacer(1, 20))  # 添加空白行
+
+        # Daily Return 解释
+        daily_return_explanation = """
+        <b>Daily Return Explanation:</b><br/>
+        The daily return is calculated as the percentage change in the stock's closing price from one day to the next. 
+        It helps investors understand the stock's short-term performance and volatility.<br/><br/>
+        The formula for daily return is:<br/>
+        <b><i>Daily Return = (Closing Price on Current Day - Closing Price on Previous Day) / Closing Price on Previous Day</i></b><br/><br/>
+        Below are some example daily returns for the last 5 days:<br/>
+        """
+
+        elements.append(Paragraph(daily_return_explanation, normal_style))
+
+        # 添加示例数据
+        example_data = [[str(date.date()), f"{ret*100:.2f}%"] for date, ret in daily_returns[-5:].items()]
+        example_table = Table([["Date", "Daily Return"]] + example_data)
+        example_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+
+        elements.append(example_table)
+
+        # 添加更多有用的信息
+        additional_info = """
+        <b>Volatility:</b> The standard deviation of daily returns over the past month is an indicator of the stock's volatility.<br/>
+        <b>Average Daily Return:</b> The average of the daily returns over the past month can provide insight into the stock's average performance.<br/><br/>
+        """
+
+        # 计算并添加更多数据
+        volatility = daily_returns.std() * 100
+        average_daily_return = daily_returns.mean() * 100
+
+        additional_data = [
+            ["Volatility (Last 30 Days)", f"{volatility:.2f}%"],
+            ["Average Daily Return (Last 30 Days)", f"{average_daily_return:.2f}%"]
+        ]
+
+        additional_table = Table(additional_data)
+        additional_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph(additional_info, normal_style))
+        elements.append(additional_table)
+
+        doc.build(elements)
 
         # 删除临时文件
         os.remove(chart_path)
+        os.remove(daily_return_chart_path)
 
         return response
     except Exception as e:
