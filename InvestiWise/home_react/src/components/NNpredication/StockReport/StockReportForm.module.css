@@ -1,0 +1,93 @@
+:root {
+    --primary-100: #d4eaf7;
+    --primary-200: #b6ccd8;
+    --primary-300: #3b3c3d;
+    --accent-100: #71c4ef;
+    --accent-200: #00668c;
+    --text-100: #1d1c1c;
+    --text-200: #313d44;
+    --bg-100: #fffefb;
+    --bg-200: #f5f4f1;
+    --bg-300: #cccbc8;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: var(--bg-200);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  .headerContainer {
+    background-color: var(--bg-300);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .headerText {
+    margin: 0;
+    font-size: 24px;
+    color: var(--text-100);
+    text-align: center;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .formGroup label {
+    font-size: 16px;
+    color: var(--text-100);
+    margin-bottom: 5px;
+  }
+  
+  .formGroup input {
+    padding: 10px;
+    border: 1px solid var(--bg-300);
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #ecf0f1;
+  }
+  
+  .submitButton {
+    padding: 12px;
+    background-color: var(--primary-300);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background: #5b5656;
+  }
+  
+  .downloadLink {
+    margin-top: 20px;
+    text-decoration: none;
+    color: var(--accent-200);
+    font-size: 16px;
+  }
+  
+  .downloadLink:hover {
+    text-decoration: underline;
+  }
+  
