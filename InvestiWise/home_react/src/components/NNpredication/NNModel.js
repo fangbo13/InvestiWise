@@ -8,7 +8,7 @@ import NewsSentiment from './NewsSentiment/NewsSentiment';
 import PredictStockPrice from './PredictStockPrice/PredictStockPrice';
 import RiskInvestments from './RiskInvestments/RiskInvestments';
 import StockMovingAverage from './StockMovingAverage/StockMovingAverage';
-
+import StockReportForm from './StockReport/StockReportForm';
 
 function NNPrediction() {
     return (
@@ -20,6 +20,7 @@ function NNPrediction() {
             <RiskInvestments/>
             <PredictStockPrice/>
             <NewsSentiment />
+            <StockReportForm /> 
             <Footer /> 
         </div>
     );

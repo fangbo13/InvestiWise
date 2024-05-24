@@ -1,10 +1,11 @@
 import datetime
+import logging
 import os
 
 import numpy as np
 import pandas as pd
 import yfinance as yf
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -14,6 +15,7 @@ from .lstm_model import get_trained_lstm_model, predict_future_prices
 from .ml_module import train_model
 from .models import LSTMPrediction
 from .serializers import LSTMSerializer
+from .stock_report import generate_pdf_report
 
 
 class LSTMInputView(APIView):
@@ -127,3 +129,19 @@ def get_sentiment(request):
 
     sentiment_data = get_reddit_sentiments(query)
     return Response(sentiment_data)
+
+
+
+logger = logging.getLogger(__name__)
+
+class GenerateStockReportView(APIView):
+    def post(self, request):
+        stock_code = request.data.get('stock_code')
+        if not stock_code:
+            return Response({"error": "Stock code is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            return generate_pdf_report(stock_code)
+        except Exception as e:  
+            logger.error(f"Error in GenerateStockReportView: {e}")
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
