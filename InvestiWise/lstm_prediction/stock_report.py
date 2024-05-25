@@ -223,7 +223,7 @@ def generate_pdf_report(stock_code):
 
         # Daily Return 图表
         elements.append(Spacer(1, 2))   # 缩小与页面顶部的间距
-        elements.append(Paragraph(f"Daily Return Chart for {stock_code}", subtitle_style))
+        elements.append(Paragraph(f"Market Analysis for {stock_code}", subtitle_style))
         elements.append(Spacer(1, 2))   # 缩小标题与图片之间的间距
         daily_return_img = Image(daily_return_chart_path)
         daily_return_img.drawHeight = 3 * inch
