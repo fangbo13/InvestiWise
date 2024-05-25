@@ -4,6 +4,7 @@ import tempfile
 from datetime import datetime
 
 import matplotlib.pyplot as plt
+import praw
 import yfinance as yf
 from django.http import HttpResponse
 from reportlab.graphics.shapes import Drawing, Line, String
@@ -13,11 +14,15 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import (Image, PageBreak, Paragraph, SimpleDocTemplate,
                                 Spacer, Table, TableStyle)
+from transformers import pipeline
 
 logger = logging.getLogger(__name__)
 
 # 使用Agg后端
 plt.switch_backend('Agg')
+
+# 初始化BERT情感分析器
+sentiment_analyzer = pipeline('sentiment-analysis')
 
 def fetch_stock_data(stock_code):
     stock = yf.Ticker(stock_code)
@@ -75,6 +80,67 @@ def generate_ma_insights(data):
 
     return current_price, current_ma10, trend, position
 
+def analyze_sentiment(text):
+    max_length = 512
+    sentiments = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
+    
+    # 分段处理
+    for i in range(0, len(text), max_length):
+        segment = text[i:i+max_length]
+        sentiment = sentiment_analyzer(segment)
+        label = sentiment[0]['label']
+        if label == 'POSITIVE':
+            sentiments['POSITIVE'] += 1
+        elif label == 'NEGATIVE':
+            sentiments['NEGATIVE'] += 1
+        else:
+            sentiments['NEUTRAL'] += 1
+    
+    return sentiments
+
+def get_reddit_sentiments(query):
+    reddit = praw.Reddit(
+        client_id='ByGHuaBLiK2AdpNTPWKlCA',  
+        client_secret='KfB9LAgGXaJ7PhUzRFvNZr32P3g5lg',  
+        user_agent='Haibo Fang'  
+    )
+
+    total_sentiments = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
+    processed_posts = 0
+
+    for submission in reddit.subreddit('all').search(query, limit=100):
+        title = submission.title
+        selftext = submission.selftext
+        
+        # 合并标题和自文本进行情感分析
+        text_to_analyze = f"{title}. {selftext}"
+        sentiments = analyze_sentiment(text_to_analyze)
+        
+        # 累加每篇帖子的情感结果
+        total_sentiments['POSITIVE'] += sentiments['POSITIVE']
+        total_sentiments['NEGATIVE'] += sentiments['NEGATIVE']
+        total_sentiments['NEUTRAL'] += sentiments['NEUTRAL']
+        
+        processed_posts += 1
+
+    total_positive = (total_sentiments['POSITIVE'] / processed_posts) * 100
+    total_negative = (total_sentiments['NEGATIVE'] / processed_posts) * 100
+
+    return total_positive, total_negative
+
+def create_sentiment_chart(positive, negative, stock_code):
+    labels = 'Positive', 'Negative'
+    sizes = [positive, negative]
+    colors = ['green', 'red']
+    
+    plt.figure(figsize=(5, 5))
+    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+    plt.title(f"Market Sentiment for {stock_code}")
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+    plt.savefig(temp_file.name, format='png')
+    plt.close()  # 确保图像关闭
+    return temp_file.name
+
 def create_title(stock_code):
     drawing = Drawing(500, 50)
     drawing.add(String(250, 40, f"Investment Report for {stock_code}", fontSize=24, fillColor=colors.black, textAnchor='middle'))
@@ -91,6 +157,9 @@ def generate_pdf_report(stock_code):
         annual_return = calculate_annual_return(stock_data)
         current_price, current_ma10, trend, position = generate_ma_insights(stock_data)
 
+        total_positive, total_negative = get_reddit_sentiments(stock_code)
+        sentiment_chart_path = create_sentiment_chart(total_positive, total_negative, stock_code)
+
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{stock_code}_report.pdf"'
 
@@ -104,11 +173,11 @@ def generate_pdf_report(stock_code):
         # 标题
         title = create_title(stock_code)
         elements.append(title)
-        elements.append(Spacer(1, 10))  # 添加空白行
+        elements.append(Spacer(1, 5))  # 缩小标题与页面顶部的间距
 
         # 图像
         elements.append(Paragraph(f"Stock Price Chart for {stock_code}", subtitle_style))
-        elements.append(Spacer(1, 12))  # 添加空白行
+        elements.append(Spacer(1, 5))  # 缩小标题与图片之间的间距
         img = Image(chart_path)
         img.drawHeight = 3 * inch
         img.drawWidth = 6 * inch
@@ -137,7 +206,7 @@ def generate_pdf_report(stock_code):
         ]))
 
         elements.append(table)
-        elements.append(Spacer(1, 20))  # 添加空白行
+        elements.append(Spacer(1, 5))  # 添加5px的空白行
 
         # MA10解释
         explanation = """
@@ -153,8 +222,9 @@ def generate_pdf_report(stock_code):
         elements.append(PageBreak())
 
         # Daily Return 图表
+        elements.append(Spacer(1, 2))   # 缩小与页面顶部的间距
         elements.append(Paragraph(f"Daily Return Chart for {stock_code}", subtitle_style))
-        elements.append(Spacer(1, 12))  # 添加空白行
+        elements.append(Spacer(1, 2))   # 缩小标题与图片之间的间距
         daily_return_img = Image(daily_return_chart_path)
         daily_return_img.drawHeight = 3 * inch
         daily_return_img.drawWidth = 6 * inch
@@ -185,13 +255,9 @@ def generate_pdf_report(stock_code):
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
 
-        # 删除 Daily Return 表格名称
-        # daily_return_table_name = Paragraph("Daily Return Table", normal_style)
-        
         # 添加更多有用的信息
         additional_info = """
         <b>Volatility:</b> The standard deviation of daily returns over the past month is an indicator of the stock's volatility.<br/>
-        <b>Average Daily Return:</b> The average of the daily returns over the past month can provide insight into the stock's average performance.<br/><br/>
         """
         additional_info_paragraph = Paragraph(additional_info, normal_style)
         
@@ -214,16 +280,31 @@ def generate_pdf_report(stock_code):
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
 
-        # 删除 Volatility and Average Daily Return 表格名称
-        # additional_table_name = Paragraph("Volatility and Average Daily Return Table", normal_style)
+        # 创建并列布局的表格和饼图
+        sentiment_chart_img = Image(sentiment_chart_path)
+        sentiment_chart_img.drawHeight = 2.5 * inch
+        sentiment_chart_img.drawWidth = 2.5 * inch
+        sentiment_explanation = f"""
+        <b>Sentiment Analysis Explanation:</b><br/>
+        Based on recent Reddit posts mentioning {stock_code}, the market sentiment is as follows:<br/>
+        Positive: {total_positive:.2f}%, Negative: {total_negative:.2f}%
+        """
+        sentiment_paragraph = Paragraph(sentiment_explanation, normal_style)
 
-        # 创建并列布局的表格
+        right_column_content = [
+            [additional_info_paragraph],
+            [Spacer(1, 5)],  # 添加5px的空白行
+            [additional_table],
+            [sentiment_chart_img],
+            [sentiment_paragraph]
+        ]
+
         two_column_table = Table(
             [
                 [
                     [daily_return_paragraph, Spacer(1, 12), example_table],  # 删除 daily_return_table_name
                     Spacer(1, 0.5 * inch),  # 增加左右表格之间的间距
-                    [additional_info_paragraph, Spacer(1, 12), additional_table]  # 删除 additional_table_name
+                    right_column_content  # 将右列内容包括在内
                 ]
             ],
             colWidths=[doc.width / 2.0 - 30, 30, doc.width / 2.0 - 30]  # 调整列宽
@@ -238,12 +319,14 @@ def generate_pdf_report(stock_code):
         ]))
 
         elements.append(two_column_table)
-        
+        elements.append(Spacer(1, 20))  # 添加空白行
+
         doc.build(elements)
 
         # 删除临时文件
         os.remove(chart_path)
         os.remove(daily_return_chart_path)
+        os.remove(sentiment_chart_path)
     
         return response
     except Exception as e:
