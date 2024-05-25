@@ -170,8 +170,7 @@ def generate_pdf_report(stock_code):
         <b><i>Daily Return = (Closing Price on Current Day - Closing Price on Previous Day) / Closing Price on Previous Day</i></b><br/><br/>
         Below are some example daily returns for the last 5 days:<br/>
         """
-
-        elements.append(Paragraph(daily_return_explanation, normal_style))
+        daily_return_paragraph = Paragraph(daily_return_explanation, normal_style)
 
         # 添加示例数据
         example_data = [[str(date.date()), f"{ret*100:.2f}%"] for date, ret in daily_returns[-5:].items()]
@@ -186,14 +185,16 @@ def generate_pdf_report(stock_code):
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
 
-        elements.append(example_table)
-
+        # 删除 Daily Return 表格名称
+        # daily_return_table_name = Paragraph("Daily Return Table", normal_style)
+        
         # 添加更多有用的信息
         additional_info = """
         <b>Volatility:</b> The standard deviation of daily returns over the past month is an indicator of the stock's volatility.<br/>
         <b>Average Daily Return:</b> The average of the daily returns over the past month can provide insight into the stock's average performance.<br/><br/>
         """
-
+        additional_info_paragraph = Paragraph(additional_info, normal_style)
+        
         # 计算并添加更多数据
         volatility = daily_returns.std() * 100
         average_daily_return = daily_returns.mean() * 100
@@ -202,7 +203,6 @@ def generate_pdf_report(stock_code):
             ["Volatility (Last 30 Days)", f"{volatility:.2f}%"],
             ["Average Daily Return (Last 30 Days)", f"{average_daily_return:.2f}%"]
         ]
-
         additional_table = Table(additional_data)
         additional_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
@@ -214,16 +214,37 @@ def generate_pdf_report(stock_code):
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
 
-        elements.append(Spacer(1, 20))
-        elements.append(Paragraph(additional_info, normal_style))
-        elements.append(additional_table)
+        # 删除 Volatility and Average Daily Return 表格名称
+        # additional_table_name = Paragraph("Volatility and Average Daily Return Table", normal_style)
 
+        # 创建并列布局的表格
+        two_column_table = Table(
+            [
+                [
+                    [daily_return_paragraph, Spacer(1, 12), example_table],  # 删除 daily_return_table_name
+                    Spacer(1, 0.5 * inch),  # 增加左右表格之间的间距
+                    [additional_info_paragraph, Spacer(1, 12), additional_table]  # 删除 additional_table_name
+                ]
+            ],
+            colWidths=[doc.width / 2.0 - 30, 30, doc.width / 2.0 - 30]  # 调整列宽
+        )
+        two_column_table.setStyle(TableStyle([
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.transparent),  # 将容器的边框设为透明
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.transparent),  # 将容器的边框设为透明
+            ('LEFTPADDING', (0, 0), (-1, -1), 10),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 10)
+        ]))
+
+        elements.append(two_column_table)
+        
         doc.build(elements)
 
         # 删除临时文件
         os.remove(chart_path)
         os.remove(daily_return_chart_path)
-
+    
         return response
     except Exception as e:
         logger.error(f"Error generating PDF report for stock code {stock_code}: {e}")
