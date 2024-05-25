@@ -4,7 +4,10 @@ import tempfile
 from datetime import datetime
 
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import praw
+import talib
 import yfinance as yf
 from django.http import HttpResponse
 from reportlab.graphics.shapes import Drawing, Line, String
@@ -14,14 +17,18 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import (Image, PageBreak, Paragraph, SimpleDocTemplate,
                                 Spacer, Table, TableStyle)
+from sklearn.metrics import classification_report, roc_auc_score, roc_curve
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 from transformers import pipeline
 
 logger = logging.getLogger(__name__)
 
-# 使用Agg后端
+# Use the Agg backend
 plt.switch_backend('Agg')
 
-# 初始化BERT情感分析器
+# Initialize BERT sentiment analyzer
 sentiment_analyzer = pipeline('sentiment-analysis')
 
 def fetch_stock_data(stock_code):
@@ -29,11 +36,75 @@ def fetch_stock_data(stock_code):
     hist = stock.history(period="1y")
     return hist
 
+def fetch_data(stock_code, training_years=10):
+    end_date = pd.Timestamp.now()
+    start_date = end_date - pd.DateOffset(years=training_years)
+    return yf.download(stock_code, start=start_date.strftime('%Y-%m-%d'), end=end_date.strftime('%Y-%m-%d'))
+
 def calculate_annual_return(data):
     start_price = data['Close'].iloc[0]
     end_price = data['Close'].iloc[-1]
     annual_return = ((end_price - start_price) / start_price) * 100
     return annual_return
+
+def feature_engineering(data, prediction_days=7):
+    data['Returns'] = data['Close'].pct_change()
+    data['HL_PCT'] = (data['High'] - data['Low']) / data['Close'] * 100.0
+    data['PCT_change'] = (data['Close'] - data['Open']) / data['Open'] * 100.0
+
+    data['RSI'] = talib.RSI(data['Close'], timeperiod=14)
+    data['ADX'] = talib.ADX(data['High'], data['Low'], data['Close'], timeperiod=14)
+    data['OBV'] = talib.OBV(data['Close'], data['Volume'])
+    data['MACD'], data['MACD_signal'], data['MACD_hist'] = talib.MACD(data['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+    data['ATR'] = talib.ATR(data['High'], data['Low'], data['Close'], timeperiod=14)
+    data['slowk'], data['slowd'] = talib.STOCH(data['High'], data['Low'], data['Close'], fastk_period=14, slowk_period=3, slowd_period=3)
+    data['CCI'] = talib.CCI(data['High'], data['Low'], data['Close'], timeperiod=14)
+    upperband, middleband, lowerband = talib.BBANDS(data['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    data['upperband'] = upperband
+    data['middleband'] = middleband
+    data['lowerband'] = lowerband
+    data['MOM'] = talib.MOM(data['Close'], timeperiod=10)
+
+    data['Future_Close'] = data['Close'].shift(-prediction_days)
+    data['Target'] = (data['Future_Close'] > data['Close']).astype(int)
+
+    return data.dropna()
+
+def prepare_data(data, prediction_days=7, test_size=0.2):
+    data = feature_engineering(data, prediction_days)
+    feature_columns = [col for col in data.columns if col not in ['Close', 'Future_Close', 'Target']]
+    X = data[feature_columns]
+    y = data['Target']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    return X_train, X_test, y_train, y_test
+
+def train_model(stock_code):
+    data = fetch_data(stock_code, training_years=10)
+    X_train, X_test, y_train, y_test = prepare_data(data, prediction_days=7)
+
+    model = SVC(probability=True)
+    parameters = {'C': [0.1, 1, 10, 100], 'gamma': [1, 0.1, 0.01, 0.001, 'scale']}
+
+    clf = GridSearchCV(model, parameters, cv=5, scoring='accuracy', n_jobs=-1)
+    clf.fit(X_train, y_train)
+    best_model = clf.best_estimator_
+    predictions = best_model.predict(X_test)
+    prediction_proba = best_model.predict_proba(X_test)[:, 1]
+    report = classification_report(y_test, predictions)
+    fpr, tpr, _ = roc_curve(y_test, prediction_proba)
+    roc_auc = roc_auc_score(y_test, prediction_proba)
+
+    return {
+        "predictions": predictions,
+        "prediction_proba": prediction_proba.tolist(),
+        "best_params": clf.best_params_,
+        "classification_report": report,
+        "roc_curve": {"fpr": fpr.tolist(), "tpr": tpr.tolist()},
+        "roc_auc": roc_auc
+    }
 
 def create_stock_chart(data, stock_code):
     data['MA10'] = data['Close'].rolling(window=10).mean()
@@ -48,7 +119,7 @@ def create_stock_chart(data, stock_code):
     plt.grid(True)
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
     plt.savefig(temp_file.name, format='png')
-    plt.close()  # 确保图像关闭
+    plt.close()  # Ensure the image is closed
     return temp_file.name
 
 def create_daily_return_chart(data, stock_code):
@@ -64,7 +135,7 @@ def create_daily_return_chart(data, stock_code):
     plt.grid(True)
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
     plt.savefig(temp_file.name, format='png')
-    plt.close()  # 确保图像关闭
+    plt.close()  # Ensure the image is closed
     return temp_file.name, daily_returns
 
 def generate_ma_insights(data):
@@ -84,7 +155,7 @@ def analyze_sentiment(text):
     max_length = 512
     sentiments = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
     
-    # 分段处理
+    # Process in segments
     for i in range(0, len(text), max_length):
         segment = text[i:i+max_length]
         sentiment = sentiment_analyzer(segment)
@@ -112,11 +183,11 @@ def get_reddit_sentiments(query):
         title = submission.title
         selftext = submission.selftext
         
-        # 合并标题和自文本进行情感分析
+        # Combine title and selftext for sentiment analysis
         text_to_analyze = f"{title}. {selftext}"
         sentiments = analyze_sentiment(text_to_analyze)
         
-        # 累加每篇帖子的情感结果
+        # Accumulate the sentiment results of each post
         total_sentiments['POSITIVE'] += sentiments['POSITIVE']
         total_sentiments['NEGATIVE'] += sentiments['NEGATIVE']
         total_sentiments['NEUTRAL'] += sentiments['NEUTRAL']
@@ -138,7 +209,7 @@ def create_sentiment_chart(positive, negative, stock_code):
     plt.title(f"Market Sentiment for {stock_code}")
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
     plt.savefig(temp_file.name, format='png')
-    plt.close()  # 确保图像关闭
+    plt.close()  # Ensure the image is closed
     return temp_file.name
 
 def create_title(stock_code):
@@ -160,6 +231,11 @@ def generate_pdf_report(stock_code):
         total_positive, total_negative = get_reddit_sentiments(stock_code)
         sentiment_chart_path = create_sentiment_chart(total_positive, total_negative, stock_code)
 
+        # Call the machine learning model for prediction results
+        prediction_results = train_model(stock_code)
+        last_prediction = prediction_results['predictions'][-1]
+        prediction_message = "UP" if last_prediction == 1 else "DOWN"
+
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{stock_code}_report.pdf"'
 
@@ -170,21 +246,21 @@ def generate_pdf_report(stock_code):
         subtitle_style = styles['Heading2']
         normal_style = styles['BodyText']
 
-        # 标题
+        # Title
         title = create_title(stock_code)
         elements.append(title)
-        elements.append(Spacer(1, 5))  # 缩小标题与页面顶部的间距
+        elements.append(Spacer(1, 5))  # Reduce space between title and top of the page
 
-        # 图像
+        # Image
         elements.append(Paragraph(f"Stock Price Chart for {stock_code}", subtitle_style))
-        elements.append(Spacer(1, 5))  # 缩小标题与图片之间的间距
+        elements.append(Spacer(1, 5))  # Reduce space between title and image
         img = Image(chart_path)
         img.drawHeight = 3 * inch
         img.drawWidth = 6 * inch
         elements.append(img)
-        elements.append(Spacer(1, 20))  # 添加空白行
+        elements.append(Spacer(1, 20))  # Add a blank line
 
-        # 表格
+        # Table
         data = [
             ["Stock Code", stock_code],
             ["Closing Price on", f"${last_close_price:.2f}"],
@@ -206,9 +282,9 @@ def generate_pdf_report(stock_code):
         ]))
 
         elements.append(table)
-        elements.append(Spacer(1, 5))  # 添加5px的空白行
+        elements.append(Spacer(1, 5))  # Add a 5px blank line
 
-        # MA10解释
+        # MA10 explanation
         explanation = """
         <b>Explanation:</b><br/>
         The 10-day moving average (MA10) is the average closing price over the past 10 days.
@@ -218,20 +294,21 @@ def generate_pdf_report(stock_code):
         """
         elements.append(Paragraph(explanation, normal_style))
 
-        # 添加分页符
+        # Add a page break
         elements.append(PageBreak())
 
-        # Daily Return 图表
-        elements.append(Spacer(1, 2))   # 缩小与页面顶部的间距
+        # Market analysis chart and information
         elements.append(Paragraph(f"Market Analysis for {stock_code}", subtitle_style))
-        elements.append(Spacer(1, 2))   # 缩小标题与图片之间的间距
+        elements.append(Spacer(1, 2))  # Reduce space between title and top of the page
+
+        # Daily Return chart
         daily_return_img = Image(daily_return_chart_path)
         daily_return_img.drawHeight = 3 * inch
         daily_return_img.drawWidth = 6 * inch
         elements.append(daily_return_img)
-        elements.append(Spacer(1, 20))  # 添加空白行
+        elements.append(Spacer(1, 20))  # Add a blank line
 
-        # Daily Return 解释
+        # Daily Return explanation
         daily_return_explanation = """
         <b>Daily Return Explanation:</b><br/>
         The daily return is calculated as the percentage change in the stock's closing price from one day to the next. 
@@ -242,7 +319,7 @@ def generate_pdf_report(stock_code):
         """
         daily_return_paragraph = Paragraph(daily_return_explanation, normal_style)
 
-        # 添加示例数据
+        # Add example data
         example_data = [[str(date.date()), f"{ret*100:.2f}%"] for date, ret in daily_returns[-5:].items()]
         example_table = Table([["Date", "Daily Return"]] + example_data)
         example_table.setStyle(TableStyle([
@@ -255,13 +332,13 @@ def generate_pdf_report(stock_code):
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
 
-        # 添加更多有用的信息
+        # Add more useful information
         additional_info = """
         <b>Volatility:</b> The standard deviation of daily returns over the past month is an indicator of the stock's volatility.<br/>
         """
         additional_info_paragraph = Paragraph(additional_info, normal_style)
         
-        # 计算并添加更多数据
+        # Calculate and add more data
         volatility = daily_returns.std() * 100
         average_daily_return = daily_returns.mean() * 100
 
@@ -280,7 +357,7 @@ def generate_pdf_report(stock_code):
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
 
-        # 创建并列布局的表格和饼图
+        # Create a side-by-side layout for the table and pie chart
         sentiment_chart_img = Image(sentiment_chart_path)
         sentiment_chart_img.drawHeight = 2.5 * inch
         sentiment_chart_img.drawWidth = 2.5 * inch
@@ -293,7 +370,7 @@ def generate_pdf_report(stock_code):
 
         right_column_content = [
             [additional_info_paragraph],
-            [Spacer(1, 5)],  # 添加5px的空白行
+            [Spacer(1, 5)],  # Add a 5px blank line
             [additional_table],
             [sentiment_chart_img],
             [sentiment_paragraph]
@@ -302,28 +379,36 @@ def generate_pdf_report(stock_code):
         two_column_table = Table(
             [
                 [
-                    [daily_return_paragraph, Spacer(1, 12), example_table],  # 删除 daily_return_table_name
-                    Spacer(1, 0.5 * inch),  # 增加左右表格之间的间距
-                    right_column_content  # 将右列内容包括在内
+                    [daily_return_paragraph, Spacer(1, 12), example_table],  # Remove daily_return_table_name
+                    Spacer(1, 0.5 * inch),  # Increase space between the tables
+                    right_column_content  # Include right column content
                 ]
             ],
-            colWidths=[doc.width / 2.0 - 30, 30, doc.width / 2.0 - 30]  # 调整列宽
+            colWidths=[doc.width / 2.0 - 30, 30, doc.width / 2.0 - 30]  # Adjust column widths
         )
         two_column_table.setStyle(TableStyle([
             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.transparent),  # 将容器的边框设为透明
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.transparent),  # 将容器的边框设为透明
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.transparent),  # Set the container border to transparent
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.transparent),  # Set the container border to transparent
             ('LEFTPADDING', (0, 0), (-1, -1), 10),
             ('RIGHTPADDING', (0, 0), (-1, -1), 10)
         ]))
 
         elements.append(two_column_table)
-        elements.append(Spacer(1, 20))  # 添加空白行
+        elements.append(Spacer(1, 20))  # Add a blank line
 
+        # Add machine learning prediction results
+        prediction_explanation = f"""
+        <b>Prediction Results:</b><br/>
+        Predictions based on the SVM model, {stock_code} will go <b>{prediction_message}</b> on the 7th trading day.
+        """
+        elements.append(Paragraph(prediction_explanation, normal_style))
+
+        
         doc.build(elements)
 
-        # 删除临时文件
+        # Remove temporary files
         os.remove(chart_path)
         os.remove(daily_return_chart_path)
         os.remove(sentiment_chart_path)
