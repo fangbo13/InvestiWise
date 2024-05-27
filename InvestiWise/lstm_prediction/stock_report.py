@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from reportlab.graphics.shapes import Drawing, Line, String
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import (Image, PageBreak, Paragraph, SimpleDocTemplate,
                                 Spacer, Table, TableStyle)
@@ -353,7 +353,7 @@ def create_zoomed_lstm_chart(data, prediction_dates, future_predictions):
     return temp_file.name
 
 # 使用新的API host和API key
-openai.api_base = "https://api.chatanywhere.cn"
+openai.api_base = "https://api.chatanywhere.tech"
 openai.api_key = "sk-PtqtSxClmAXS2pnJ3doleQHkKQWn6m7XGqiaPqHP0GVUgBdZ"
 
 def generate_gpt_content(stock_code, last_close_price, annual_return, current_price, current_ma10, trend, position):
@@ -425,6 +425,7 @@ def generate_pdf_report(stock_code):
         styles = getSampleStyleSheet()
         subtitle_style = styles['Heading2']
         normal_style = styles['BodyText']
+        gpt_style = ParagraphStyle('GPT', parent=normal_style, fontSize=10, spaceBefore=10, spaceAfter=10)
 
         # Title
         title = create_title(stock_code)
@@ -438,10 +439,6 @@ def generate_pdf_report(stock_code):
         img.drawHeight = 3 * inch
         img.drawWidth = 6 * inch
         elements.append(img)
-        elements.append(Spacer(1, 20))  # Add a blank line
-
-        # GPT generated content
-        elements.append(Paragraph(gpt_content, normal_style))
         elements.append(Spacer(1, 20))  # Add a blank line
 
         # Table
@@ -606,227 +603,15 @@ def generate_pdf_report(stock_code):
         elements.append(Spacer(1, 20))  # Add a blank line
         elements.append(zoomed_lstm_img)
 
-        doc.build(elements)
-
-        # Remove temporary files
-        os.remove(chart_path)
-        os.remove(daily_return_chart_path)
-        os.remove(sentiment_chart_path)
-        os.remove(lstm_chart_path)
-        os.remove(zoomed_lstm_chart_path)
-    
-        return response
-    except Exception as e:
-        logger.error(f"Error generating PDF report for stock code {stock_code}: {e}")
-        raise
-
-    try:
-        stock_data = fetch_stock_data(stock_code)
-        chart_path = create_stock_chart(stock_data, stock_code)
-        daily_return_chart_path, daily_returns = create_daily_return_chart(stock_data, stock_code)
-        last_close_price = stock_data['Close'].iloc[-1]
-        annual_return = calculate_annual_return(stock_data)
-        current_price, current_ma10, trend, position = generate_ma_insights(stock_data)
-
-        total_positive, total_negative = get_reddit_sentiments(stock_code)
-        sentiment_chart_path = create_sentiment_chart(total_positive, total_negative, stock_code)
-
-        # Call the LSTM model for prediction results
-        lstm_results = predict_future_prices(stock_code)
-        lstm_chart_path = create_lstm_chart(lstm_results, lstm_results['predictions'], lstm_results['test'], lstm_results['test_predictions'], lstm_results['prediction_dates'], lstm_results['predictions'])
-        zoomed_lstm_chart_path = create_zoomed_lstm_chart(lstm_results, lstm_results['prediction_dates'], lstm_results['predictions'])
-
-        # Generate content using GPT
-        gpt_content = generate_gpt_content(stock_code, last_close_price, annual_return, current_price, current_ma10, trend, position)
-
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{stock_code}_report.pdf"'
-
-        doc = SimpleDocTemplate(response, pagesize=letter)
-        elements = []
-
-        styles = getSampleStyleSheet()
-        subtitle_style = styles['Heading2']
-        normal_style = styles['BodyText']
-
-        # Title
-        title = create_title(stock_code)
-        elements.append(title)
-        elements.append(Spacer(1, 5))  # Reduce space between title and top of the page
-
-        # Image
-        elements.append(Paragraph(f"Stock Price Chart for {stock_code}", subtitle_style))
-        elements.append(Spacer(1, 5))  # Reduce space between title and image
-        img = Image(chart_path)
-        img.drawHeight = 3 * inch
-        img.drawWidth = 6 * inch
-        elements.append(img)
-        elements.append(Spacer(1, 20))  # Add a blank line
-
         # GPT generated content
-        elements.append(Paragraph(gpt_content, normal_style))
-
-        # Table
-        data = [
-            ["Stock Code", stock_code],
-            ["Closing Price on", f"${last_close_price:.2f}"],
-            ["Annual Return", f"{annual_return:.2f}%"],
-            ["Current Price", f"${current_price:.2f}"],
-            ["10-Day Moving Average", f"{current_ma10:.2f}"],
-            ["Trend", f"The stock is currently in a {trend} and is {position} the 10-day moving average."]
-        ]
-
-        table = Table(data)
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
-        ]))
-
-        elements.append(table)
-        elements.append(Spacer(1, 5))  # Add a 5px blank line
-
-        # MA10 explanation
-        explanation = """
-        <b>Explanation:</b><br/>
-        The 10-day moving average (MA10) is the average closing price over the past 10 days.
-        It helps to smooth out price data and identify trends.
-        If the current price is above the MA10, it indicates an uptrend.
-        If it's below, it indicates a downtrend.
-        """
-        elements.append(Paragraph(explanation, normal_style))
-
-        # Add a page break
         elements.append(PageBreak())
-
-        # Market analysis chart and information
-        elements.append(Paragraph(f"Market Analysis for {stock_code}", subtitle_style))
-        elements.append(Spacer(1, 2))  # Reduce space between title and top of the page
-
-        # Daily Return chart
-        daily_return_img = Image(daily_return_chart_path)
-        daily_return_img.drawHeight = 3 * inch
-        daily_return_img.drawWidth = 6 * inch
-        elements.append(daily_return_img)
-        elements.append(Spacer(1, 20))  # Add a blank line
-
-        # Daily Return explanation
-        daily_return_explanation = """
-        <b>Daily Return Explanation:</b><br/>
-        The daily return is calculated as the percentage change in the stock's closing price from one day to the next. 
-        It helps investors understand the stock's short-term performance and volatility.<br/><br/>
-        The formula for daily return is:<br/>
-        <b><i>Daily Return = (Closing Price on Current Day - Closing Price on Previous Day) / Closing Price on Previous Day</i></b><br/><br/>
-        Below are some example daily returns for the last 5 days:<br/>
-        """
-        daily_return_paragraph = Paragraph(daily_return_explanation, normal_style)
-
-        # Add example data
-        example_data = [[str(date.date()), f"{ret*100:.2f}%"] for date, ret in daily_returns[-5:].items()]
-        example_table = Table([["Date", "Daily Return"]] + example_data)
-        example_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
-        ]))
-
-        # Add more useful information
-        additional_info = """
-        <b>Volatility:</b> The standard deviation of daily returns over the past month is an indicator of the stock's volatility.<br/>
-        """
-        additional_info_paragraph = Paragraph(additional_info, normal_style)
+        elements.append(Paragraph(f"GPT Generated Analysis for {stock_code}", subtitle_style))
+        elements.append(Spacer(1, 5))  # Reduce space between title and content
         
-        # Calculate and add more data
-        volatility = daily_returns.std() * 100
-        average_daily_return = daily_returns.mean() * 100
-
-        additional_data = [
-            ["Volatility (Last 30 Days)", f"{volatility:.2f}%"],
-            ["Average Daily Return (Last 30 Days)", f"{average_daily_return:.2f}%"]
-        ]
-        additional_table = Table(additional_data)
-        additional_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
-        ]))
-
-        # Create a side-by-side layout for the table and pie chart
-        sentiment_chart_img = Image(sentiment_chart_path)
-        sentiment_chart_img.drawHeight = 2.5 * inch
-        sentiment_chart_img.drawWidth = 2.5 * inch
-        sentiment_explanation = f"""
-        <b>Sentiment Analysis Explanation:</b><br/>
-        Based on recent Reddit posts mentioning {stock_code}, the market sentiment is as follows:<br/>
-        Positive: {total_positive:.2f}%, Negative: {total_negative:.2f}%
-        """
-        sentiment_paragraph = Paragraph(sentiment_explanation, normal_style)
-
-        right_column_content = [
-            [additional_info_paragraph],
-            [Spacer(1, 5)],  # Add a 5px blank line
-            [additional_table],
-            [sentiment_chart_img],
-            [sentiment_paragraph]
-        ]
-
-        two_column_table = Table(
-            [
-                [
-                    [daily_return_paragraph, Spacer(1, 12), example_table],  # Remove daily_return_table_name
-                    Spacer(1, 0.5 * inch),  # Increase space between the tables
-                    right_column_content  # Include right column content
-                ]
-            ],
-            colWidths=[doc.width / 2.0 - 30, 30, doc.width / 2.0 - 30]  # Adjust column widths
-        )
-        two_column_table.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.transparent),  # Set the container border to transparent
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.transparent),  # Set the container border to transparent
-            ('LEFTPADDING', (0, 0), (-1, -1), 10),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 10)
-        ]))
-
-        elements.append(two_column_table)
-        elements.append(Spacer(1, 20))  # Add a blank line
-
-        # LSTM prediction results
-        elements.append(PageBreak())
-        elements.append(Paragraph(f"LSTM Prediction Analysis for {stock_code}", subtitle_style))
-        elements.append(Spacer(1, 5))  # Reduce space between title and image
-        lstm_img = Image(lstm_chart_path)
-        lstm_img.drawHeight = 3 * inch
-        lstm_img.drawWidth = 6 * inch
-        elements.append(lstm_img)
-
-        lstm_explanation = """
-        <b>LSTM Prediction Results:</b><br/>
-        The chart below shows the LSTM model's predictions for the stock prices over the last 20 days and the next 7 days.
-        The blue line represents the actual prices, the orange line represents the predicted prices for the validation period, 
-        and the green line represents the future predictions.
-        """
-        elements.append(Paragraph(lstm_explanation, normal_style))
-
-        # Zoomed LSTM prediction results
-        zoomed_lstm_img = Image(zoomed_lstm_chart_path)
-        zoomed_lstm_img.drawHeight = 3 * inch
-        zoomed_lstm_img.drawWidth = 6 * inch
-        elements.append(Spacer(1, 20))  # Add a blank line
-        elements.append(zoomed_lstm_img)
+        gpt_paragraphs = gpt_content.split("\n\n")
+        for paragraph in gpt_paragraphs:
+            elements.append(Paragraph(paragraph, gpt_style))
+            elements.append(Spacer(1, 5))
 
         doc.build(elements)
 
