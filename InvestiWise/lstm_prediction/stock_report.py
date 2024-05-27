@@ -356,29 +356,24 @@ def create_zoomed_lstm_chart(data, prediction_dates, future_predictions):
 openai.api_base = "https://api.chatanywhere.tech"
 openai.api_key = "sk-PtqtSxClmAXS2pnJ3doleQHkKQWn6m7XGqiaPqHP0GVUgBdZ"
 
-def generate_gpt_content(stock_code, last_close_price, annual_return, current_price, current_ma10, trend, position):
+def generate_gpt_content(stock_code, last_close_price, annual_return, current_price, current_ma10, trend, position, volatility, avg_daily_return, last_5_days_returns, future_predictions, positive_sentiment, negative_sentiment):
     prompt = f"""
-    You are a professional financial analyst. Generate a detailed stock analysis report section based on the following data:
-    
-    Stock Code: {stock_code}
+    You are a professional financial analyst. Based on the following data, generate a detailed stock investment recommendation for {stock_code}:
+
     Closing Price: ${last_close_price:.2f}
     Annual Return: {annual_return:.2f}%
     Current Price: ${current_price:.2f}
     10-Day Moving Average: ${current_ma10:.2f}
-    Trend: The stock is currently in a {trend} and is {position} the 10-day moving average.
+    Trend: {trend}
+    Position: {position}
+    Volatility (Last 30 Days): {volatility:.2f}%
+    Average Daily Return (Last 30 Days): {avg_daily_return:.2f}%
+    Last 5 Days Returns: {last_5_days_returns}
+    Positive Sentiment: {positive_sentiment:.2f}%
+    Negative Sentiment: {negative_sentiment:.2f}%
+    LSTM Prediction (Next 7 Days): {future_predictions}
     
-    The report should follow this structure:
-
-    Introduction:
-    Provide a brief introduction about the stock, its market position, and recent performance.
-
-    Detailed Analysis:
-    - Closing Price: Explain the significance of the closing price and how it reflects the stock's performance.
-    - Annual Return: Discuss the annual return and what it indicates about the stock's profitability.
-    - Current Price vs. 10-Day Moving Average: Analyze the relationship between the current price and the 10-day moving average. Explain the trend and what it suggests about the stock's future performance.
-
-    Conclusion:
-    Summarize the key points and provide a professional recommendation based on the analysis.
+    Provide a concise investment recommendation based on this data. Focus on the stock's potential risks, opportunities, and overall investment advice.
     """
     
     response = openai.ChatCompletion.create(
@@ -409,12 +404,16 @@ def generate_pdf_report(stock_code):
         lstm_chart_path = create_lstm_chart(lstm_results, lstm_results['predictions'], lstm_results['test'], lstm_results['test_predictions'], lstm_results['prediction_dates'], lstm_results['predictions'])
         zoomed_lstm_chart_path = create_zoomed_lstm_chart(lstm_results, lstm_results['prediction_dates'], lstm_results['predictions'])
 
-        # Generate content using GPT
-        gpt_content = generate_gpt_content(stock_code, last_close_price, annual_return, current_price, current_ma10, trend, position)
+        # Calculate volatility and average daily return
+        volatility = daily_returns.std() * 100
+        avg_daily_return = daily_returns.mean() * 100
 
-        # 打印生成的内容以进行调试
-        print("GPT generated content:")
-        print(gpt_content)
+        # Collect last 5 days returns
+        last_5_days_returns = {str(date.date()): ret * 100 for date, ret in daily_returns[-5:].items()}
+
+        # Generate content using GPT
+        future_predictions = {date: price for date, price in zip(lstm_results['prediction_dates'], lstm_results['predictions'])}
+        gpt_content = generate_gpt_content(stock_code, last_close_price, annual_return, current_price, current_ma10, trend, position, volatility, avg_daily_return, last_5_days_returns, future_predictions, total_positive, total_negative)
 
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{stock_code}_report.pdf"'
@@ -501,7 +500,7 @@ def generate_pdf_report(stock_code):
         daily_return_paragraph = Paragraph(daily_return_explanation, normal_style)
 
         # Add example data
-        example_data = [[str(date.date()), f"{ret*100:.2f}%"] for date, ret in daily_returns[-5:].items()]
+        example_data = [[str(date.date()), f"{ret * 100:.2f}%"] for date, ret in daily_returns[-5:].items()]
         example_table = Table([["Date", "Daily Return"]] + example_data)
         example_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
@@ -591,8 +590,6 @@ def generate_pdf_report(stock_code):
         lstm_explanation = """
         <b>LSTM Prediction Results:</b><br/>
         The chart below shows the LSTM model's predictions for the stock prices over the last 20 days and the next 7 days.
-        The blue line represents the actual prices, the orange line represents the predicted prices for the validation period, 
-        and the green line represents the future predictions.
         """
         elements.append(Paragraph(lstm_explanation, normal_style))
 
