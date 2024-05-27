@@ -157,6 +157,7 @@ const PredictStockPrice = () => {
                                 type="text"
                                 id="stockCode"
                                 name="stockCode"
+                                placeholder="e.g., AAPL"
                                 value={inputData.stockCode}
                                 onChange={handleInputChange}
                                 required

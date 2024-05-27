@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import (LSTMInputView, calculate_risk, daily_return_view,
-                    get_risk_coefficients, get_sentiment, moving_average_view,
-                    predict_stock_price)
+from .views import (GenerateStockReportView, LSTMInputView, calculate_risk,
+                    daily_return_view, get_risk_coefficients, get_sentiment,
+                    moving_average_view, predict_stock_price)
 
 urlpatterns = [
     path('predict_lstm/', LSTMInputView.as_view(), name='predict_lstm'),
@@ -12,5 +12,7 @@ urlpatterns = [
     path('calculate_risk/', calculate_risk, name='calculate_risk'),
     path('predict_stock_price/', predict_stock_price, name='predict_stock_price'),
     path('sentiment/', get_sentiment, name='get_sentiment'),
+    path('generate_stock_report/', GenerateStockReportView.as_view(), name='generate_stock_report'),
+
 
 ]
