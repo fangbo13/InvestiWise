@@ -28,7 +28,9 @@ from tensorflow.keras.models import Sequential
 from transformers import pipeline
 
 logger = logging.getLogger(__name__)
-
+# 使用新的API host和API key
+openai.api_base = "https://api.chatanywhere.tech"
+openai.api_key = "sk-PtqtSxClmAXS2pnJ3doleQHkKQWn6m7XGqiaPqHP0GVUgBdZ"
 # Use the Agg backend
 plt.switch_backend('Agg')
 
@@ -157,9 +159,28 @@ def generate_ma_insights(data):
 
 def analyze_sentiment(text):
     max_length = 512
+    sentiment_counts = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
+    segment_count = 0
+    
+    for i in range(0, len(text), max_length):
+        segment = text[i:i+max_length]
+        sentiment = sentiment_analyzer(segment)
+        label = sentiment[0]['label']
+        if label == 'POSITIVE':
+            sentiment_counts['POSITIVE'] += 1
+        elif label == 'NEGATIVE':
+            sentiment_counts['NEGATIVE'] += 1
+        else:
+            sentiment_counts['NEUTRAL'] += 1
+        segment_count += 1
+    
+    # Calculate the predominant sentiment for the entire text
+    predominant_sentiment = max(sentiment_counts, key=sentiment_counts.get)
+    return predominant_sentiment
+
+    max_length = 512
     sentiments = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
     
-    # Process in segments
     for i in range(0, len(text), max_length):
         segment = text[i:i+max_length]
         sentiment = sentiment_analyzer(segment)
@@ -171,9 +192,75 @@ def analyze_sentiment(text):
         else:
             sentiments['NEUTRAL'] += 1
     
+    # Print debug information
+    print(f"Segment sentiments: {sentiments}")
+    
     return sentiments
 
 def get_reddit_sentiments(query):
+    reddit = praw.Reddit(
+        client_id='ByGHuaBLiK2AdpNTPWKlCA',  
+        client_secret='KfB9LAgGXaJ7PhUzRFvNZr32P3g5lg',  
+        user_agent='Haibo Fang'  
+    )
+
+    total_sentiments = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
+    processed_posts = 0
+
+    for submission in reddit.subreddit('all').search(query, limit=100):
+        title = submission.title
+        selftext = submission.selftext
+        
+        text_to_analyze = f"{title}. {selftext}"
+        predominant_sentiment = analyze_sentiment(text_to_analyze)
+        
+        total_sentiments[predominant_sentiment] += 1
+        processed_posts += 1
+
+    if processed_posts == 0:
+        return 0, 0, 0  # Avoid division by zero
+    
+    total_positive = (total_sentiments['POSITIVE'] / processed_posts) * 100
+    total_negative = (total_sentiments['NEGATIVE'] / processed_posts) * 100
+    total_neutral = (total_sentiments['NEUTRAL'] / processed_posts) * 100
+
+    return total_positive, total_negative, total_neutral
+
+    reddit = praw.Reddit(
+        client_id='ByGHuaBLiK2AdpNTPWKlCA',  
+        client_secret='KfB9LAgGXaJ7PhUzRFvNZr32P3g5lg',  
+        user_agent='Haibo Fang'  
+    )
+
+    total_sentiments = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
+    processed_posts = 0
+
+    for submission in reddit.subreddit('all').search(query, limit=100):
+        title = submission.title
+        selftext = submission.selftext
+        
+        text_to_analyze = f"{title}. {selftext}"
+        sentiments = analyze_sentiment(text_to_analyze)
+        
+        total_sentiments['POSITIVE'] += sentiments['POSITIVE']
+        total_sentiments['NEGATIVE'] += sentiments['NEGATIVE']
+        total_sentiments['NEUTRAL'] += sentiments['NEUTRAL']
+        
+        processed_posts += 1
+
+    if processed_posts == 0:
+        return 0, 0  # Avoid division by zero
+    
+    total_positive = (total_sentiments['POSITIVE'] / processed_posts) * 100
+    total_negative = (total_sentiments['NEGATIVE'] / processed_posts) * 100
+
+    # Print debug information
+    print(f"Total sentiments: {total_sentiments}")
+    print(f"Processed posts: {processed_posts}")
+    print(f"Total positive: {total_positive}%, Total negative: {total_negative}%")
+
+    return total_positive, total_negative
+
     reddit = praw.Reddit(
         client_id='ByGHuaBLiK2AdpNTPWKlCA',  
         client_secret='KfB9LAgGXaJ7PhUzRFvNZr32P3g5lg',  
@@ -203,7 +290,23 @@ def get_reddit_sentiments(query):
 
     return total_positive, total_negative
 
-def create_sentiment_chart(positive, negative, stock_code):
+def create_sentiment_chart(positive, negative, neutral, stock_code):
+    print(f"Creating sentiment chart with: Positive={positive}%, Negative={negative}%, Neutral={neutral}%")
+    
+    labels = 'Positive', 'Negative', 'Neutral'
+    sizes = [positive, negative, neutral]
+    colors = ['green', 'red', 'grey']
+    
+    plt.figure(figsize=(5, 5))
+    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+    plt.title(f"Market Sentiment for {stock_code}")
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+    plt.savefig(temp_file.name, format='png')
+    plt.close()  # Ensure the image is closed
+    return temp_file.name
+
+    print(f"Creating sentiment chart with: Positive={positive}%, Negative={negative}%")
+    
     labels = 'Positive', 'Negative'
     sizes = [positive, negative]
     colors = ['green', 'red']
@@ -352,10 +455,6 @@ def create_zoomed_lstm_chart(data, prediction_dates, future_predictions):
     plt.close()
     return temp_file.name
 
-# 使用新的API host和API key
-openai.api_base = "https://api.chatanywhere.tech"
-openai.api_key = "sk-PtqtSxClmAXS2pnJ3doleQHkKQWn6m7XGqiaPqHP0GVUgBdZ"
-
 def generate_gpt_content(stock_code, last_close_price, annual_return, current_price, current_ma10, trend, position, volatility, avg_daily_return, last_5_days_returns, future_predictions, positive_sentiment, negative_sentiment):
     prompt = f"""
     You are a professional financial analyst. Based on the following data, generate a detailed stock investment recommendation for {stock_code}:
@@ -396,8 +495,9 @@ def generate_pdf_report(stock_code):
         annual_return = calculate_annual_return(stock_data)
         current_price, current_ma10, trend, position = generate_ma_insights(stock_data)
 
-        total_positive, total_negative = get_reddit_sentiments(stock_code)
-        sentiment_chart_path = create_sentiment_chart(total_positive, total_negative, stock_code)
+        total_positive, total_negative, total_neutral = get_reddit_sentiments(stock_code)
+        print(f"Sentiment Analysis for {stock_code}: Positive={total_positive}%, Negative={total_negative}%, Neutral={total_neutral}%")
+        sentiment_chart_path = create_sentiment_chart(total_positive, total_negative, total_neutral, stock_code)
 
         # Call the LSTM model for prediction results
         lstm_results = predict_future_prices(stock_code)
