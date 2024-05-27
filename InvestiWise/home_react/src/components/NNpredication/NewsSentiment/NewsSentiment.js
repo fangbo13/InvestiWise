@@ -47,6 +47,7 @@ const NewsSentiment = () => {
               type="text"
               id="company"
               name="company"
+              placeholder="e.g., Apple,AAPL"
               value={company}
               onChange={(e) => {
                 if (e.target.value.length <= 50) {
