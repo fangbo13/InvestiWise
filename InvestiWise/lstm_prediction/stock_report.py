@@ -660,7 +660,7 @@ def generate_pdf_report(stock_code):
         daily_return_paragraph = Paragraph(daily_return_explanation, normal_style)
 
         # Add example data
-        example_data = [[str(date.date()), f"{ret:.2f}%"] for date, ret in daily_returns[-5:].items()]
+        example_data = [[str(date.date()), f"{ret*100:.2f}%"] for date, ret in daily_returns[-5:].items()]
         example_table = Table([["Date", "Daily Return"]] + example_data)
         example_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
