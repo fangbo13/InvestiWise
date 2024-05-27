@@ -43,6 +43,9 @@ Welcome to Haibo's dissertation project! This system leverages machine learning,
 4. **Access the application:**
     The application should automatically open in your default web browser. If it doesn't, manually enter `http://localhost:3000` in your browser's address bar.
 
+## Sample Report
+For a sample report, check out the [AAPL report](https://github.com/fangbo13/Haibo_Fang23-24-Dissertation/blob/main/AAPL_report.pdf).
+
 ## Acknowledgements
 Pending
 
