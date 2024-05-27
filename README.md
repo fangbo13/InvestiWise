@@ -21,7 +21,7 @@ Welcome to Haibo's dissertation project! This system leverages machine learning,
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/yourusername/Haibo_Fang23-24-Dissertation.git
+    git clone https://github.com/fangbo13/Haibo_Fang23-24-Dissertation.git
     cd Haibo_Fang23-24-Dissertation/InvestiWise
     ```
 
