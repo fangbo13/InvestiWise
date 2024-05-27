@@ -795,7 +795,7 @@ def generate_pdf_report(stock_code):
 
         # Small title before GPT content
         elements.append(Spacer(1, 20))  # Add a blank line
-        elements.append(Paragraph("<i>Insights and Future Predictions:</i>", ParagraphStyle('Italic', parent=normal_style, fontSize=12, spaceBefore=10, spaceAfter=10)))
+        elements.append(Paragraph("<b>Insights and Future Predictions:</b>", ParagraphStyle('Bold', parent=normal_style, fontSize=12, spaceBefore=10, spaceAfter=10)))
         elements.append(Spacer(1, 5))  # Reduce space between title and content
         
         gpt_paragraphs = gpt_content.split("\n\n")
