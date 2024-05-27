@@ -49,6 +49,9 @@ For a sample report, check out the [AAPL report](https://github.com/fangbo13/Hai
 ## Acknowledgements
 Pending
 
+## Disclaimer
+This project is for educational purposes only. The predictions and analysis provided by this system are based on historical data and various machine learning models. They should not be considered as financial advice. Investing in the stock market involves risks, and it is important to conduct your own research and consult with a financial advisor before making any investment decisions.
+
 ---
 
 🚀 *Happy Analyzing and Predicting!* 🚀
