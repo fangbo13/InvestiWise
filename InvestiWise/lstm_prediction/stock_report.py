@@ -179,6 +179,26 @@ def analyze_sentiment(text):
     return predominant_sentiment
 
     max_length = 512
+    sentiment_counts = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
+    segment_count = 0
+    
+    for i in range(0, len(text), max_length):
+        segment = text[i:i+max_length]
+        sentiment = sentiment_analyzer(segment)
+        label = sentiment[0]['label']
+        if label == 'POSITIVE':
+            sentiment_counts['POSITIVE'] += 1
+        elif label == 'NEGATIVE':
+            sentiment_counts['NEGATIVE'] += 1
+        else:
+            sentiment_counts['NEUTRAL'] += 1
+        segment_count += 1
+    
+    # Calculate the predominant sentiment for the entire text
+    predominant_sentiment = max(sentiment_counts, key=sentiment_counts.get)
+    return predominant_sentiment
+
+    max_length = 512
     sentiments = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
     
     for i in range(0, len(text), max_length):
@@ -198,6 +218,34 @@ def analyze_sentiment(text):
     return sentiments
 
 def get_reddit_sentiments(query):
+    reddit = praw.Reddit(
+        client_id='ByGHuaBLiK2AdpNTPWKlCA',  
+        client_secret='KfB9LAgGXaJ7PhUzRFvNZr32P3g5lg',  
+        user_agent='Haibo Fang'  
+    )
+
+    total_sentiments = {'POSITIVE': 0, 'NEGATIVE': 0, 'NEUTRAL': 0}
+    processed_posts = 0
+
+    for submission in reddit.subreddit('all').search(query, limit=100):
+        title = submission.title
+        selftext = submission.selftext
+        
+        text_to_analyze = f"{title}. {selftext}"
+        predominant_sentiment = analyze_sentiment(text_to_analyze)
+        
+        total_sentiments[predominant_sentiment] += 1
+        processed_posts += 1
+
+    if processed_posts == 0:
+        return 0, 0, 0  # Avoid division by zero
+    
+    total_positive = (total_sentiments['POSITIVE'] / processed_posts) * 100
+    total_negative = (total_sentiments['NEGATIVE'] / processed_posts) * 100
+    total_neutral = (total_sentiments['NEUTRAL'] / processed_posts) * 100
+
+    return total_positive, total_negative, total_neutral
+
     reddit = praw.Reddit(
         client_id='ByGHuaBLiK2AdpNTPWKlCA',  
         client_secret='KfB9LAgGXaJ7PhUzRFvNZr32P3g5lg',  
@@ -291,6 +339,19 @@ def get_reddit_sentiments(query):
     return total_positive, total_negative
 
 def create_sentiment_chart(positive, negative, neutral, stock_code):
+    
+    labels = 'Positive', 'Negative', 'Neutral'
+    sizes = [positive, negative, neutral]
+    colors = ['green', 'red', 'grey']
+    
+    plt.figure(figsize=(5, 5))
+    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+    plt.title(f"Market Sentiment for {stock_code}")
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+    plt.savefig(temp_file.name, format='png')
+    plt.close()  # Ensure the image is closed
+    return temp_file.name
+
     print(f"Creating sentiment chart with: Positive={positive}%, Negative={negative}%, Neutral={neutral}%")
     
     labels = 'Positive', 'Negative', 'Neutral'
@@ -457,7 +518,7 @@ def create_zoomed_lstm_chart(data, prediction_dates, future_predictions):
 
 def generate_gpt_content(stock_code, last_close_price, annual_return, current_price, current_ma10, trend, position, volatility, avg_daily_return, last_5_days_returns, future_predictions, positive_sentiment, negative_sentiment):
     prompt = f"""
-    You are a professional financial analyst. Based on the following data, generate a detailed stock investment recommendation for {stock_code}:
+    You are a professional financial analyst. Based on the following data, generate a concise stock investment recommendation for {stock_code}. Ensure the recommendation is no more than 250 words.
 
     Closing Price: ${last_close_price:.2f}
     Annual Return: {annual_return:.2f}%
@@ -471,10 +532,10 @@ def generate_gpt_content(stock_code, last_close_price, annual_return, current_pr
     Positive Sentiment: {positive_sentiment:.2f}%
     Negative Sentiment: {negative_sentiment:.2f}%
     LSTM Prediction (Next 7 Days): {future_predictions}
-    
-    Provide a concise investment recommendation based on this data. Focus on the stock's potential risks, opportunities, and overall investment advice.
+
+    Based on the analysis, here is the investment recommendation for {stock_code}:
     """
-    
+
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -485,7 +546,7 @@ def generate_gpt_content(stock_code, last_close_price, annual_return, current_pr
     )
     
     return response.choices[0].message['content'].strip()
-
+    
 def generate_pdf_report(stock_code):
     try:
         stock_data = fetch_stock_data(stock_code)
@@ -496,7 +557,6 @@ def generate_pdf_report(stock_code):
         current_price, current_ma10, trend, position = generate_ma_insights(stock_data)
 
         total_positive, total_negative, total_neutral = get_reddit_sentiments(stock_code)
-        print(f"Sentiment Analysis for {stock_code}: Positive={total_positive}%, Negative={total_negative}%, Neutral={total_neutral}%")
         sentiment_chart_path = create_sentiment_chart(total_positive, total_negative, total_neutral, stock_code)
 
         # Call the LSTM model for prediction results
@@ -600,7 +660,7 @@ def generate_pdf_report(stock_code):
         daily_return_paragraph = Paragraph(daily_return_explanation, normal_style)
 
         # Add example data
-        example_data = [[str(date.date()), f"{ret * 100:.2f}%"] for date, ret in daily_returns[-5:].items()]
+        example_data = [[str(date.date()), f"{ret:.2f}%"] for date, ret in daily_returns[-5:].items()]
         example_table = Table([["Date", "Daily Return"]] + example_data)
         example_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
@@ -693,16 +753,49 @@ def generate_pdf_report(stock_code):
         """
         elements.append(Paragraph(lstm_explanation, normal_style))
 
-        # Zoomed LSTM prediction results
+        # Adding LSTM explanation
+        lstm_details = """
+        <b>Understanding LSTM Predictions:</b><br/>
+        LSTM (Long Short-Term Memory) networks are a type of recurrent neural network capable of learning order dependence in sequence prediction problems.
+        The chart above shows the LSTM model's ability to predict stock prices based on historical data.<br/><br/>
+        <b>Mean Squared Error (MSE):</b> The MSE is a measure of the average squared difference between the predicted and actual values. 
+        It indicates how close the predicted prices are to the actual prices.<br/>
+        """
+        elements.append(Paragraph(lstm_details, normal_style))
+
+        # Calculate and display MSE
+        mse = np.mean((np.array(lstm_results['test_predictions']) - np.array(lstm_results['test']))**2)
+        elements.append(Spacer(1, 7))  # Add 7px space before MSE
+        elements.append(Paragraph(f"<b>MSE:</b> {mse:.4f}", normal_style))
+        
+        elements.append(Spacer(1, 10))  # Add 10px space before the table
+
+        # Add last 7 days data table
+        last_7_days_data = [[lstm_results['dates'][-7:][i], lstm_results['test'][-7:][i], lstm_results['test_predictions'][-7:][i]] for i in range(7)]
+        last_7_days_table = Table([["Date", "Actual", "Predicted"]] + last_7_days_data)
+        last_7_days_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        elements.append(last_7_days_table)
+
+        # Zoomed LSTM prediction results on the next page with a small title
+        elements.append(PageBreak())
+        elements.append(Paragraph(f"Detailed LSTM Predictions", subtitle_style))
+        elements.append(Spacer(1, 5))  # Reduce space between title and image
         zoomed_lstm_img = Image(zoomed_lstm_chart_path)
         zoomed_lstm_img.drawHeight = 3 * inch
         zoomed_lstm_img.drawWidth = 6 * inch
-        elements.append(Spacer(1, 20))  # Add a blank line
         elements.append(zoomed_lstm_img)
 
-        # GPT generated content
-        elements.append(PageBreak())
-        elements.append(Paragraph(f"GPT Generated Analysis for {stock_code}", subtitle_style))
+        # Small title before GPT content
+        elements.append(Spacer(1, 20))  # Add a blank line
+        elements.append(Paragraph("<i>Insights and Future Predictions:</i>", ParagraphStyle('Italic', parent=normal_style, fontSize=12, spaceBefore=10, spaceAfter=10)))
         elements.append(Spacer(1, 5))  # Reduce space between title and content
         
         gpt_paragraphs = gpt_content.split("\n\n")
