@@ -5,7 +5,7 @@ import yfinance as yf
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, roc_auc_score, roc_curve
 from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVC
 
 
@@ -14,7 +14,6 @@ def fetch_data(stock_code, training_years):
     end_date = pd.Timestamp.now()
     start_date = end_date - pd.DateOffset(years=training_years)
     return yf.download(stock_code, start=start_date.strftime('%Y-%m-%d'), end=end_date.strftime('%Y-%m-%d'))
-
 
 def feature_engineering(data, prediction_days):
     """Generate technical indicators and a target for future price movement."""
@@ -49,11 +48,10 @@ def prepare_data(data, prediction_days=5, test_size=0.2):
     X = data[feature_columns]
     y = data['Target']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-    scaler = StandardScaler()
+    scaler = MinMaxScaler(feature_range=(0, 1))
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
     return X_train, X_test, y_train, y_test
-
 
 def train_model(stock_code, training_years, model_type='RF', prediction_days=5, test_size=0.2):
     data = fetch_data(stock_code, training_years)
@@ -68,7 +66,7 @@ def train_model(stock_code, training_years, model_type='RF', prediction_days=5, 
     else:
         raise ValueError("Unsupported model type")
 
-    clf = GridSearchCV(model, parameters, cv=5, scoring='accuracy', n_jobs=-1)
+    clf = GridSearchCV(model, parameters, cv=5, scoring='accuracy', n_jobs=16)
     clf.fit(X_train, y_train)
     best_model = clf.best_estimator_
     predictions = best_model.predict(X_test)
@@ -85,7 +83,6 @@ def train_model(stock_code, training_years, model_type='RF', prediction_days=5, 
         "roc_curve": {"fpr": fpr.tolist(), "tpr": tpr.tolist()},
         "roc_auc": roc_auc
     }
-
 
 # Example usage
 if __name__ == "__main__":

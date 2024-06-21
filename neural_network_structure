@@ -1,0 +1,20 @@
+digraph {
+	fontsize=20 label="Neural Network Structure"
+	Input [label="Input Layer
+(shape=(60, 1))"]
+	LSTM1 [label="LSTM Layer
+(units=200, return_sequences=True)"]
+	Dropout1 [label="Dropout Layer
+(rate=0.031)"]
+	LSTM2 [label="LSTM Layer
+(units=200, return_sequences=False)"]
+	Dropout2 [label="Dropout Layer
+(rate=0.031)"]
+	Output [label="Dense Layer
+(units=1)"]
+	Input -> LSTM1
+	LSTM1 -> Dropout1
+	Dropout1 -> LSTM2
+	LSTM2 -> Dropout2
+	Dropout2 -> Output
+}
