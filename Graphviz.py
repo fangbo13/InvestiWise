@@ -1,38 +1,40 @@
 from graphviz import Digraph
 
+# 创建一个有向图对象
+dot = Digraph()
 
-def create_neural_network_diagram():
-    dot = Digraph()
+# 设置整体的方向为从左到右
+dot.attr(rankdir='LR')
 
-    # 设置图的标题
-    dot.attr(label='Neural Network Structure', fontsize='20')
+# BERT模型子图
+with dot.subgraph(name='cluster_0') as c:
+    c.attr(label='BERT 模型', style='filled', color='lightgrey')
+    c.node_attr.update(style='filled', color='white', shape='record')
+    c.node('input_text', '输入文本')
+    c.node('embedding', '词嵌入 + 文本嵌入 + 位置嵌入')
+    c.node('encoder', '''<encoder> 编码器层 | 多头自注意力机制 | 前馈神经网络 | Add&Norm''')
 
-    # 输入层
-    dot.node('Input', 'Input Layer\n(shape=(60, 1))')
+    c.edge('input_text', 'embedding')
+    c.edge('embedding', 'encoder')
 
-    # 第一层LSTM
-    dot.node('LSTM1', 'LSTM Layer\n(units=200, return_sequences=True)')
+# 特征提取节点
+dot.node('feature_extraction', '特征提取')
 
-    # 第一层Dropout
-    dot.node('Dropout1', 'Dropout Layer\n(rate=0.031)')
+# 情绪分类子图
+with dot.subgraph(name='cluster_1') as c:
+    c.attr(label='情绪分类', style='filled', color='lightblue')
+    c.node_attr.update(style='filled', color='white', shape='record')
+    c.node('lstm', 'LSTM 层')
+    c.node('bi_lstm', '双向LSTM 层')
+    c.node('fc', '全连接层')
 
-    # 第二层LSTM
-    dot.node('LSTM2', 'LSTM Layer\n(units=200, return_sequences=False)')
+    c.edge('lstm', 'bi_lstm')
+    c.edge('bi_lstm', 'fc')
 
-    # 第二层Dropout
-    dot.node('Dropout2', 'Dropout Layer\n(rate=0.031)')
+# 连接BERT模型与情绪分类
+dot.edge('encoder', 'feature_extraction')
+dot.edge('feature_extraction', 'lstm')
 
-    # 输出层
-    dot.node('Output', 'Dense Layer\n(units=1)')
-
-    # 添加节点之间的连线
-    dot.edge('Input', 'LSTM1')
-    dot.edge('LSTM1', 'Dropout1')
-    dot.edge('Dropout1', 'LSTM2')
-    dot.edge('LSTM2', 'Dropout2')
-    dot.edge('Dropout2', 'Output')
-
-    # 保存并展示图
-    dot.render('neural_network_structure', format='png', cleanup=False)
-
-create_neural_network_diagram()
+# 保存并展示图像
+file_path = '/mnt/data/bert_lstm_model_professional_fixed.png'
+dot.render(file_path, format='png', cleanup=True)
