@@ -46,6 +46,9 @@ Welcome to Haibo's dissertation project! This system leverages machine learning,
 ## Sample Report
 For a sample report, check out the [AAPL report](https://github.com/fangbo13/Haibo_Fang23-24-Dissertation/blob/main/AAPL_report.pdf).
 
+## Demo Video
+https://drive.google.com/file/d/1G3DIknaOjgzzzgdx3vqVc99-Nw90qMNO/view?usp=drive_link
+
 ## Acknowledgements
 Pending
 
