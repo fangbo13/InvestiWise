@@ -1,7 +1,7 @@
 # Financial Market Analysis and Prediction System 📈🤖
 
 ## Overview
-Welcome to Haibo's dissertation project! This system leverages machine learning, deep learning, and NLP to analyze and predict financial market trends. It's a perfect blend of technology and finance, crafted for my graduation project.
+Welcome to InvestiWise! This system leverages machine learning, deep learning, and NLP to analyze and predict financial market trends. It's a perfect blend of technology and finance, crafted for my graduation project.
 
 ## Key Features
 - **Real-Time Data**: Utilizing NewsAPI, Twitter API(RedditAPI), and Yahoo Finance API.
@@ -27,7 +27,7 @@ Welcome to Haibo's dissertation project! This system leverages machine learning,
 
 2. **Set up the Django backend:**
     ```sh
-    cd E:\Haibo_Fang23-24-Dissertation\InvestiWise
+    cd E:\XXXXXXX\InvestiWise
     python manage.py makemigrations
     python manage.py migrate
     python manage.py runserver
@@ -35,7 +35,7 @@ Welcome to Haibo's dissertation project! This system leverages machine learning,
 
 3. **Set up the React frontend:**
     ```sh
-    cd E:\Haibo_Fang23-24-Dissertation\InvestiWise\home_react
+    cd E:\XXXXXXXX\InvestiWise\home_react
     npm install
     npm start
     ```
