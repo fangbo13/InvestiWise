@@ -21,8 +21,8 @@ Welcome to InvestiWise! This system leverages machine learning, deep learning, a
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/fangbo13/Haibo_Fang23-24-Dissertation.git
-    cd Haibo_Fang23-24-Dissertation/InvestiWise
+    git clone https://github.com/fangbo13/InvestiWise.git
+    cd XXXXXXXX/InvestiWise
     ```
 
 2. **Set up the Django backend:**
