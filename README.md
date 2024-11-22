@@ -44,7 +44,7 @@ Welcome to InvestiWise! This system leverages machine learning, deep learning, a
     The application should automatically open in your default web browser. If it doesn't, manually enter `http://localhost:3000` in your browser's address bar.
 
 ## Sample Report
-For a sample report, check out the [AAPL report](https://github.com/fangbo13/Haibo_Fang23-24-Dissertation/blob/main/AAPL_report.pdf).
+For a sample report, check out the [AAPL report](https://github.com/fangbo13/InvestiWise/blob/main/AAPL_report.pdf).
 
 ## Demo Video
 https://drive.google.com/file/d/1G3DIknaOjgzzzgdx3vqVc99-Nw90qMNO/view?usp=drive_link
