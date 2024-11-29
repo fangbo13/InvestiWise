@@ -310,6 +310,7 @@ body {
 /* Loader styling */
 .chartSection {
     position: relative; /* Make chartSection the positioning context */
+    min-width: 600px;
 }
 
 .loader {
